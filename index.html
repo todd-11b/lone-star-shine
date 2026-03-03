@@ -79,7 +79,7 @@
   .section-alt { background: var(--light); }
 
   .split { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
-  .split.reverse { direction: rtl; }
+  .split.reverse { direction: ltr; }
   .split.reverse > * { direction: ltr; }
   .split-text h2 { margin-bottom: 24px; }
   .split-text p { margin-bottom: 18px; }
@@ -310,7 +310,6 @@
   /* RESPONSIVE */
   @media (max-width: 900px) {
     .split { grid-template-columns: 1fr; gap: 48px; }
-    .split.reverse { direction: ltr; }
     .calc-inputs { grid-template-columns: 1fr; gap: 32px; }
     .calc-result { grid-template-columns: 1fr; }
     section#built div[style] { grid-template-columns: 1fr !important; }
