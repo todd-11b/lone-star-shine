@@ -1,6 +1,6 @@
 # TourOps Conversation Design Standard
 
-**Doc Revision:** r11
+**Doc Revision:** r10
 **Last Updated:** 2026-03-03
 **Status:** Behavioral Specification (Stable)
 **Scope:** All TourOps AI conversation systems (Voice AI & Conversation AI)
@@ -17,7 +17,7 @@ This document defines how AI systems should converse with customers. It is platf
 4. **Modular Script Plays** — Each intent maps to a distinct conversation flow with specific goals and data collection requirements
 5. **KB as Source of Truth** — The AI queries knowledge bases before answering factual questions (never invents answers)
 6. **SMS Pairing** — Every conversation outcome triggers appropriate follow-up SMS
-7. **Human Escalation** — The AI knows when to route to humans and does so cleanly with context preserved
+7. **Three-Tier Resolution** — Tier 1: AI resolves. Tier 2: AI schedules a callback/consultation via calendar. Tier 3: Immediate human escalation (safety/legal/active emergencies only).
 
 ---
 
@@ -45,29 +45,29 @@ Every customer interaction must be classified into exactly one intent bucket. Th
 **When:** Customer wants to modify an existing booking
 **Priority:** P2 (Retention)
 **Examples:** "Can I change my date?", "We need to reschedule", "Add 2 more people", "Different pickup location"
-**Goal:** Collect change details and route to human review
-**Escalation Trigger:** Policy exception, same-day change, >10% group size change
+**Goal:** Collect change details, offer calendar booking for human follow-up
+**Tier 2 Path:** Offer callback via calendar link after collecting details
 
 ### 4. Discovery
 **When:** Customer is exploring options, comparing, or asking general questions
 **Priority:** P3 (Lead nurture)
 **Examples:** "What tours do you have?", "What's the difference between X and Y?", "Tell me about your brewery tour"
 **Goal:** Recommend best-fit tour and move toward booking
-**Escalation Trigger:** Confidence fallback (4 turns without progress), complex custom request
+**Tier 2 Path:** If not ready to book and wants to talk through options, offer consultation via calendar link
 
 ### 5. RefundCancel
 **When:** Customer wants to cancel or request a refund
 **Priority:** P2 (Retention/policy enforcement)
 **Examples:** "I need to cancel", "Can I get a refund?", "We can't make it anymore"
-**Goal:** Collect details, provide policy guidance, route to human review
-**Escalation Trigger:** Outside policy window, dispute, dissatisfaction escalation
+**Goal:** Collect details, provide policy guidance, offer callback for processing
+**Tier 2 Path:** Provide policy from KB, offer callback via calendar link for refund processing
 
 ### 6. Corporate
 **When:** Large group (10+ people) or corporate/team event inquiry
 **Priority:** P2 (High-value opportunity)
 **Examples:** "We have 15 people", "Team building outing", "Client entertainment", "Holiday party"
-**Goal:** Qualify opportunity and route to sales team with key details
-**Escalation Trigger:** Custom logistics, multi-day events, invoice/W-9 requests
+**Goal:** Qualify opportunity and offer consultation via calendar link
+**Tier 2 Path:** Always offer consultation — these are pipeline entries, not escalations
 
 ### 7. PartnerVendor
 **When:** Non-customer operational inquiry (driver, venue, hotel, media, affiliate)
@@ -78,32 +78,25 @@ Every customer interaction must be classified into exactly one intent bucket. Th
 
 ### 8. Other (Fallback)
 **When:** Intent is unclear, ambiguous, or out-of-scope
-**Priority:** P4 (Clarify or exit)
-**Examples:** "test", "hello", job applications, spam, non-English
 **Goal:** Clarify intent or politely exit
-**Escalation Trigger:** 3 clarification attempts without resolution
+**Tier 2 Path:** If clarification fails after 3 attempts, offer callback via calendar link before escalating
 
 ---
 
-# Layer 2: Lifecycle Mapping
+# Layer 2: Lifecycle-Aware Entry Logic
 
-The AI adjusts its behavior based on lifecycle stage. Lifecycle determines tone, urgency, and information assumptions.
+Before any conversation begins, the AI checks:
 
-## Lifecycle Stages
+1. `tourops_work_state` → If `HUMAN_ACTIVE`, do not respond (AI suppressed)
+2. `tourops_lifecycle_stage` → Adjust greeting and behavior
+3. `tourops_open_loop` → If set, address it first
 
-| Stage | Definition | AI Behavior |
-|-------|------------|-------------|
-| **New** | First interaction, no prior history | Warm introduction, assume zero knowledge |
-| **Researching** | Asked questions but hasn't booked | Reference prior interest naturally |
-| **Considering** | Received link but didn't book | "Were you able to complete your booking?" |
-| **Booked** | Confirmed reservation | Focus on day-of logistics, upsells |
-| **ActiveToday** | Tour happening today | DayOf priority, urgency tone |
-| **Completed** | Tour finished | Thank you, review request, future booking nurture |
-| **Cancelled** | Cancelled without refund | Sympathy, future booking nurture |
-| **Refunded** | Cancelled with refund | Sympathy, future booking nurture |
-| **Abandoned** | Ghosted after link sent | Gentle nudge, remove pressure |
-| **Churned** | No engagement >90 days | Re-introduction, assume they forgot details |
-| **AtRisk** | Signal of dissatisfaction or day-of problem | Empathy-first, immediate triage |
+### Entry Guard Precedence (DO NOT REORDER)
+1. Work State check: HUMAN_ACTIVE → suppress
+2. Work State check: PAUSED → suppress
+3. ActiveToday check → DayOf priority
+4. AtRisk check → Retention priority
+5. Normal triage
 
 ---
 
@@ -113,31 +106,32 @@ Certain signals override normal intent classification. The AI must recognize the
 
 ## Priority Levels
 
-### P0 (Safety/Legal — Immediate Escalation)
+### P0 (Safety/Legal — Immediate Escalation, Tier 3 Only)
 **Triggers:** "police", "lawsuit", "injury", "crash", "ambulance", "assault", "harassment", "DUI", "discrimination"
 **Action:** Escalate to human immediately, collect name + callback only, end conversation
-**Do NOT:** Attempt to resolve, advise, or investigate
+**Do NOT:** Attempt to resolve, advise, investigate, or offer calendar booking
 
-### P0b (Legal/Complaint — Immediate Escalation)
+### P0b (Legal/Complaint — Immediate Escalation, Tier 3 Only)
 **Triggers:** "attorney", "lawyer", "sue", "complaint", "BBB", "ADA violation"
 **Action:** Escalate to human immediately, collect details neutrally, end conversation
-**Do NOT:** Admit fault, make promises, discuss policy
+**Do NOT:** Admit fault, make promises, discuss policy, or offer calendar booking
 
 ### P1 (Urgent — DayOf Priority)
 **Triggers:** Tour TODAY or within 24h, "right now", "urgent", "emergency", "ASAP", "immediately"
 **Action:** Route to DayOf flow, high urgency tone, escalate if KB doesn't resolve
+**Note:** Active emergencies (bus not at location, safety issue in progress) → Tier 3. Non-emergency DayOf → Tier 2 calendar if KB doesn't resolve.
 
 ### P2 (High Value)
 **Intents:** ReadyToBook, ReservationChange, RefundCancel, Corporate
-**Action:** Prioritize conversion/retention, escalate to human when needed
+**Action:** Prioritize conversion/retention. Offer Tier 2 (calendar) before Tier 3 (escalation) when human input is needed.
 
 ### P3 (Standard)
 **Intents:** Discovery, PartnerVendor
-**Action:** Normal handling, confidence fallback escalation
+**Action:** Normal handling. Offer Tier 2 (calendar) on confidence fallback before Tier 3.
 
 ### P4 (Low)
 **Intent:** Other
-**Action:** Clarify or exit gracefully
+**Action:** Clarify or exit gracefully. Offer Tier 2 on fallback.
 
 ---
 
@@ -162,11 +156,12 @@ Each intent bucket maps to a modular "script play" — a self-contained conversa
 3. Query DayOf_Logistics KB immediately
 4. Provide meeting point, timing, parking, or arrival info from KB
 5. If KB resolves issue → confirm and close
-6. If KB doesn't resolve → escalate to dispatch/operations immediately
-7. Do NOT ask multiple questions before providing KB answer
+6. If KB doesn't resolve AND non-emergency → offer callback: "Would you like me to send you a link to pick a time for someone to call you back?"
+7. If active emergency (bus missing, safety issue) → Tier 3 escalation to dispatch immediately
+8. Do NOT ask multiple questions before providing KB answer
 
-**Success Outcome:** Issue resolved or escalated to human
-**Disposition:** `tourops_outcome = Resolved` OR `tourops_outcome = Escalated`
+**Success Outcome:** Issue resolved, callback scheduled, or escalated to human
+**Disposition:** `tourops_outcome = Answered` OR `tourops_outcome = CalendarBooked` OR `tourops_outcome = Escalated`
 
 ---
 
@@ -185,13 +180,12 @@ Each intent bucket maps to a modular "script play" — a self-contained conversa
 
 **Conversation Pattern:**
 1. If open_loop exists → address it first
-2. If group size 10+ → transition to Corporate/Private play (Standard 16)
-3. If all slots filled → go straight to SMS permission
-4. Ask ONE missing slot at a time
-5. "I can text you the booking link — should I send it to this number?"
-6. If yes → confirm name if missing → send correct link
-7. If no → "What number should I use?"
-8. After sending: "I just sent that over. Let me know if you have any questions."
+2. If all slots filled → go straight to SMS permission
+3. Ask ONE missing slot at a time
+4. "I can text you the booking link — should I send it to this number?"
+5. If yes → confirm name if missing → send correct link
+6. If no → "What number should I use?"
+7. After sending: "I just sent that over. Let me know if you have any questions."
 
 **Success Outcome:** Booking link sent via SMS
 **Disposition:** `tourops_outcome = LinkSent`, `tourops_next_best_action = AwaitCustomerReply`
@@ -201,32 +195,27 @@ Each intent bucket maps to a modular "script play" — a self-contained conversa
 ## Play C: Ops Modify (ReservationChange)
 
 **Trigger:** intent_bucket = ReservationChange
-**Goal:** Collect all change details, give policy, create task for human review
+**Goal:** Collect change details and offer callback via calendar
 **Emotional Context:** Customer may be anxious — reassure them the team will handle it
 
 **Required Slot Capture:**
 - Name on reservation
-- Current tour date and time
+- Current tour date
 - Desired change (new date, group size, pickup location, etc.)
-- Preferred new date/time/size
-- Reference number (if they have it)
-- Callback number
 
 **Conversation Pattern:**
 1. If open_loop exists → address it first
 2. Acknowledge: "I can help with that."
-3. Query Policies KB → present rescheduling policy: "Our standard policy is [X]. Our team will review your specific request."
-4. Collect required slots ONE at a time
-5. Create task with all collected details: booking name, current date/time, what they want changed, new preference, reference number, policy status note
-6. Offer scheduling: "I can have someone reach out at a set time to review this with you — want me to send you a link to pick a time?"
-   - YES → send `{{custom_value.callback_scheduling_link}}` → `tourops_next_best_action = AwaitScheduledCall` → end cleanly
-   - NO → collect callback number → "Our team will reach out soon." → Tier 3
+3. Collect required slots ONE at a time
+4. If policy question arises → Query Policies KB
+5. Present policy neutrally: "Our standard policy is [X], but our team will review your specific request."
+6. Offer calendar: "I can have someone from our team follow up — would you like me to send a link to pick a time that works for you?"
+7. If yes → send `{{custom_value.callback_scheduling_link}}` via SMS
+8. If no → "No problem — I'll flag this for our team and they'll reach out as soon as possible."
+9. Reassure: "You're all set."
 
-**Task Format:** `TOUROPS — ReservationChange — [Name] — [Current Date]`
-**Task Body:** booking name, current date/time, reference number, desired change, new preference, policy status
-
-**Success Outcome:** Details collected, task created, scheduling offered, escalated to human
-**Disposition:** `tourops_outcome = TaskCreated` (V6.0), `tourops_next_best_action = AwaitScheduledCall` OR `AwaitHumanFollowUp`
+**Success Outcome:** Calendar booked OR flagged for human follow-up
+**Disposition:** `tourops_outcome = CalendarBooked`, `tourops_next_best_action = AwaitCustomerReply` OR `tourops_outcome = Escalated`, `tourops_next_best_action = HumanFollowUp`
 
 ---
 
@@ -245,83 +234,71 @@ Each intent bucket maps to a modular "script play" — a self-contained conversa
 1. If open_loop exists → address it first
 2. If no context → "What kind of experience are you looking for, and about how many people?"
 3. Query Tour_Descriptions KB based on their preferences
-4. Recommend ONE tour using Paint + Outcome: "Think [scene] — so [benefit for their group]."
-5. Ask: "Does that sound like your vibe?"
+4. Recommend 2 options maximum: "We have [Option A] which is [benefit] or [Option B] which is [benefit]."
+5. Ask: "Do either of those sound like your vibe?"
 6. If booking intent appears → transition to ReadyToBook play
-7. If group size 10+ → transition to Corporate/Private play (Standard 16)
-8. If still not ready after recommendation → offer consultation: "Want me to set up a quick call so we can walk through options once you've had a chance to think?"
-   - YES → Book Appointment action (collect email) → caller picks slot → confirm. If no email → send `{{custom_value.callback_scheduling_link}}` via SMS
-   - NO → "No problem — call back anytime." → end warmly → `tourops_outcome = FollowUpQueued`
+7. If group size 10+ → transition to Corporate play
+8. If wants to talk through options with a person → offer consultation: "Would you like me to send a link to schedule a quick call with our team?"
 
 **Success Outcome:** Moved to booking, qualified for corporate, or consultation booked
-**Disposition:** `tourops_outcome = FollowUpQueued`, `ConsultationBooked` (V6.0), OR transition to ReadyToBook/Corporate
+**Disposition:** `tourops_outcome = FollowUpQueued` OR transition to ReadyToBook/Corporate OR `tourops_outcome = CalendarBooked`
 
 ---
 
 ## Play E: Objection Handle (RefundCancel)
 
 **Trigger:** intent_bucket = RefundCancel
-**Goal:** Collect all details, provide policy guidance, create task for human review
+**Goal:** Collect details, provide policy guidance, offer callback for processing
 **Emotional Context:** Customer may be disappointed — be empathetic but policy-bound
 
 **Required Slot Capture:**
 - Name on reservation
-- Tour date and time
+- Tour/date
 - Cancel only OR refund requested
-- Booking protection (yes/no/unknown)
-- Reason for cancellation
-- Reference number (if they have it)
-- Callback number
+- Reason (if refund)
 
 **Conversation Pattern:**
 1. Acknowledge empathetically: "I understand."
-2. Ask: "Are you looking to cancel only, or also requesting a refund?"
-3. Ask: "Do you have booking protection on your reservation?"
-4. Query Policies KB → present policy: "Our standard policy is [X]. I'm going to get all of this to our team and we'll see what we can do for you."
-5. Collect remaining required slots ONE at a time
+2. Collect required slots ONE at a time
+3. Clarify: "Are you looking to cancel only, or also requesting a refund?"
+4. If refund → Query Policies KB before discussing eligibility
+5. Present policy neutrally: "Our standard policy is [X]. Our team will review your specific situation."
 6. Do NOT promise refund approval
-7. Create task with all collected details: booking name, date/time, reference number, cancel-only vs. refund, reason, booking protection status, policy status note
-8. Offer scheduling: "I can have someone from our team reach out at a set time — want me to send you a scheduling link?"
-   - YES → send `{{custom_value.callback_scheduling_link}}` → `tourops_next_best_action = AwaitScheduledCall` → end cleanly
-   - NO → collect callback number → "Our team will reach out soon." → Tier 3
+7. Offer calendar: "I can have someone follow up to take care of this — would you like me to send a link to pick a time?"
+8. If yes → send `{{custom_value.callback_scheduling_link}}` via SMS
+9. If no → "No problem — I'll flag this and our team will reach out as soon as possible."
 
-**Task Format:** `TOUROPS — RefundCancel — [Name] — [Tour Date]`
-**Task Body:** booking name, date/time, reference number, cancel vs. refund, reason, booking protection status, policy status
-
-**Success Outcome:** Details collected, task created, scheduling offered, escalated to human
-**Disposition:** `tourops_outcome = TaskCreated` (V6.0), `tourops_next_best_action = AwaitScheduledCall` OR `AwaitHumanFollowUp`
+**Success Outcome:** Calendar booked OR flagged for human follow-up
+**Disposition:** `tourops_outcome = CalendarBooked`, `tourops_next_best_action = AwaitCustomerReply` OR `tourops_outcome = Escalated`, `tourops_next_best_action = HumanFollowUp`
 
 ---
 
-## Play F: Private Tours & Large Groups (Corporate)
+## Play F: B2B Professional (Corporate)
 
-**Trigger:** intent_bucket = Corporate (10+ people, OR bachelorette, birthday, wedding, corporate outing, team building, bus rental, private event)
-**Goal:** Qualify, answer from KB, and book a consultation OR send consultation link
-**Emotional Context:** Excited occasion or business context — match accordingly
-
-> **Note on naming:** The GHL AI Splitter routing label stays `CORP` for all private/large-group inquiries. The module and prompt language should reference "private tours" as the primary category — not "corporate" as the headline. Private social events (bachelorette, birthday) are the most common trigger.
+**Trigger:** intent_bucket = Corporate (10+ people OR corporate context)
+**Goal:** Qualify opportunity and offer consultation via calendar
+**Emotional Context:** Business context — be professional and structured
 
 **Required Slot Capture:**
-- Event type (bachelorette, birthday, corporate, wedding, other)
-- Tour or transportation only?
 - Group size
-- Rough date/timeframe
-- Name + phone + email (email needed for Book Appointment action)
+- Date/timeframe
+- Event type (team building, client entertainment, holiday party, etc.)
+- Desired vibe (casual, upscale, specific requirements)
+- Decision-maker name
 
 **Conversation Pattern:**
 1. If open_loop exists → address it first
-2. Ask: "Is this for a private guided tour, or are you looking for transportation only?"
-   - Transportation only → query Booking_Links KB for bus rental URL → send via SMS → done
-3. Ask event type and group size (if not known)
-4. Query Private_Tours_Sales KB → share: tour options, per-person pricing if in KB, inclusions, duration
-5. Do NOT quote total prices. Do NOT promise availability.
-6. Book consultation:
-   "Let me set up a call so we can nail down the details."
-   - Collect email → Book Appointment action (Barley Bus Consultation calendar) → caller picks slot → confirm
-   - If no email → "No problem — I can text you a link to grab a time instead." → query Booking_Links KB for consultation URL → send via SMS
+2. Acknowledge: "For groups of 10+, we typically customize the experience."
+3. Collect required slots ONE at a time
+4. Do NOT send public booking links
+5. If pricing question → "We customize experiences based on group size and logistics. Our team will tailor options and pricing for you."
+6. If availability question → "Our team will check availability and confirm options."
+7. Offer consultation: "I'd love to get you connected with our team to put together the best options for your [event type]. Want me to send a link to pick a time?"
+8. If yes → send `{{custom_value.callback_scheduling_link}}` via SMS
+9. If no → "No problem — I'll pass your details along and someone will reach out."
 
-**Success Outcome:** Consultation booked (Book Appointment or consultation link sent)
-**Disposition:** `tourops_outcome = ConsultationBooked` (V6.0), `tourops_next_best_action = AwaitScheduledCall`, `tourops_intent_bucket = Corporate`
+**Success Outcome:** Consultation booked OR details passed for human follow-up
+**Disposition:** `tourops_outcome = CalendarBooked`, `tourops_intent_bucket = Corporate` OR `tourops_outcome = Escalated`, `tourops_next_best_action = HumanFollowUp`
 
 ---
 
@@ -362,9 +339,9 @@ Each intent bucket maps to a modular "script play" — a self-contained conversa
 4. If 2nd unclear message → Offer structured menu with 4 options
 5. If out-of-scope (job inquiry, etc.) → Direct to email/phone, end conversation
 6. If spam/test → Reply once, then stop
-7. If 3 clarification attempts fail → "I want to make sure you get the right help — what's your name and best callback number?" → Escalate
+7. If 3 clarification attempts fail → Offer callback: "I want to make sure you get the right help. Would you like me to send a link to schedule a quick call?" → If declined, escalate
 
-**Success Outcome:** Intent clarified and routed OR politely exited
+**Success Outcome:** Intent clarified and routed OR callback booked OR politely exited
 **Disposition:** Varies based on outcome
 
 ---
@@ -397,14 +374,14 @@ The AI must query knowledge bases before answering any factual question (pricing
 **Good:** [Queries Tour_Descriptions KB] "The brewery tour is $85 per person and includes 4 stops, transportation, and a souvenir glass."
 **Bad:** "The brewery tour is around $80–$90." [Invented/guessed]
 
-**If KB doesn't have the answer:** Escalate to human. Never invent.
+**If KB doesn't have the answer:** Offer callback via calendar. If declined, escalate to human. Never invent.
 
 ---
 
 ## Standard 4: Never Invent Pricing, Availability, or Policy
-If the AI doesn't know something, it says so and escalates. Never guess.
+If the AI doesn't know something, it says so and offers a callback or escalates. Never guess.
 
-**Good:** "Let me connect you with our team for that specific question."
+**Good:** "Let me have our team follow up on that — want me to send a link to pick a time?"
 **Bad:** "I think that's probably fine" or "Usually we can do that"
 
 ---
@@ -422,11 +399,11 @@ The AI defaults to SMS/WebChat unless the customer explicitly requests a call OR
 
 ---
 
-## Standard 7: Confidence Fallback Escalation
-If the AI has gone 3–4 conversational turns without making progress, escalate to human.
+## Standard 7: Confidence Fallback — Calendar First
+If the AI has gone 3–4 conversational turns without making progress, offer a callback via calendar before escalating to human.
 
-**Voice AI:** 3 turns without progress → escalate
-**Conversation AI:** 4 turns without progress → escalate
+**Voice AI:** 3 turns without progress → offer callback → if declined, escalate
+**Conversation AI:** 4 turns without progress → offer callback → if declined, escalate
 
 "Progress" means: intent classified, required slots collected, or moving toward resolution.
 
@@ -512,43 +489,52 @@ Never say "I'm texting you" without confirming they want SMS.
 
 ---
 
-## Standard 14: Escalation Protocols by Priority
+## Standard 14: Three-Tier Escalation Model
 
-### P0 (Safety/Legal) — Tier 1, Immediate
+### Tier 1 — AI Resolves
+AI answers the question, sends a booking link, or provides information. No human involvement needed.
+
+### Tier 2 — AI Schedules (Calendar Booking)
+For non-emergency situations that need human input. AI offers to send a calendar link via SMS so the customer can pick a time for a callback or consultation. Work state stays `AI_ACTIVE` — no task created, no human handoff triggered.
+
+**When to offer Tier 2:**
+- Corporate/private event inquiries (consultation)
+- Reservation changes (callback for processing)
+- Refund requests (callback for processing after providing policy)
+- Caller requests a human (non-emergency)
+- Confidence fallback (AI unsure after 3–4 turns)
+- KB doesn't have the answer (non-urgent)
+
+**Tier 2 flow:**
+1. Collect relevant details first (don't just send the link immediately)
+2. Offer: "Would you like me to send a link to pick a time for our team to follow up?"
+3. If yes → send `{{custom_value.callback_scheduling_link}}` via SMS → confirm
+4. If no → "No problem — I'll flag this and someone will reach out as soon as possible." → Tier 3 escalation
+5. Disposition: `tourops_outcome = CalendarBooked`, `tourops_work_state = AI_ACTIVE`
+
+### Tier 3 — True Escalation (Human Handoff)
+Only for safety, legal, and active emergencies. Creates a task, sets work_state to HUMAN_ACTIVE.
+
+**P0 (Safety/Legal):**
 1. Acknowledge immediately: "I hear you. I'm escalating this to our team right now."
 2. Collect only: name, callback number, tour date, brief summary
 3. Set `tourops_work_state = HUMAN_ACTIVE`, apply tags: `Human handover` + `support-urgent`
 4. End conversation immediately (Voice: end call. SMS/WebChat: stop responding)
-5. Do NOT attempt to resolve, advise, or investigate. Do NOT offer scheduling.
+5. Do NOT attempt to resolve, advise, investigate, or offer calendar
 
-### P0b (Legal/Complaint) — Tier 1, Immediate
+**P0b (Legal/Complaint):**
 1. Acknowledge neutrally: "I understand. I'm connecting you with our team."
 2. Collect: name, callback number, brief description
 3. Set `tourops_work_state = HUMAN_ACTIVE`, apply tags: `Human handover` + `support-urgent`
 4. End conversation
-5. Do NOT admit fault, make promises, or discuss policy. Do NOT offer scheduling.
+5. Do NOT admit fault, make promises, discuss policy, or offer calendar
 
-### Standard Escalation — Three-Tier Model
-
-**Tier 2 — Scheduled Callback (Default Standard Path)**
-When AI cannot resolve a non-emergency situation:
-1. Attempt KB resolution first — if KB has an answer, use it. Do not escalate just because a topic is sensitive.
-2. Only escalate when genuinely unresolvable.
-3. Offer scheduling: "I can have someone from our team reach out at a set time — want me to send you a link to pick a time?"
-4. YES → send `{{custom_value.callback_scheduling_link}}` → confirm phone number → send → set disposition → end cleanly
-   - `tourops_outcome = Escalated`, `tourops_next_best_action = AwaitScheduledCall`
-5. NO → fall to Tier 3
-
-**Tier 3 — ASAP Callback (Fallback)**
-Customer declines scheduling, or situation is urgent but not P0/P0b:
-1. "That's a specific situation — I'm going to flag this for our team."
+**Tier 3 (Declined Calendar / Active Emergency):**
+1. "I'm going to flag this for our team right away."
 2. Collect: name (if missing), callback number, brief context
 3. Set `tourops_work_state = HUMAN_ACTIVE`, apply tag: `Human handover`
 4. Create task for operator
 5. End conversation: "Our team will reach out to you soon."
-   - `tourops_outcome = Escalated`, `tourops_next_best_action = AwaitHumanFollowUp`
-
-**Threshold Rule:** The AI holds more ground before escalating. "Uncertain or risky" is not sufficient. Escalate only when KB genuinely cannot answer AND the AI has attempted resolution.
 
 ---
 
@@ -556,23 +542,9 @@ Customer declines scheduling, or situation is urgent but not P0/P0b:
 If KB query returns no relevant result:
 
 1. Do NOT guess or invent
-2. Try Tier 2 first: "I want to make sure you get the right answer — I can have someone from our team reach out at a set time. Want me to send you a scheduling link?"
-3. YES → send `{{custom_value.callback_scheduling_link}}` → end cleanly
-4. NO → "Let me flag this for our team." → collect name (if missing) + callback number → Tier 3 escalation
-
----
-
-## Standard 16: Group Size Fork at 10
-
-10 is the threshold where routing changes:
-
-- **Under 10 people** → ReadyToBook play → direct booking link via SMS
-- **10 or more people** → Corporate/Private play → qualify, answer from KB, book consultation
-
-This fork applies in both ReadyToBook and Discovery plays. When group size hits 10+, do not send a public booking link — route to consultation.
-
-**Voice AI:** "For a group that size, I want to make sure we set you up right." → PATH E
-**Conversation AI:** AI Splitter should recognize 10+ in the opening message and route to CORP module before the customer reaches a booking link.
+2. Offer callback: "I want to make sure I give you the right information — would you like me to send a link to pick a time for our team to follow up?"
+3. If yes → send calendar link via SMS
+4. If no → collect name (if missing) + callback number → Tier 3 escalation
 
 ---
 
@@ -583,13 +555,11 @@ Every conversation outcome must trigger an appropriate follow-up SMS within 60 s
 | Trigger Condition | SMS Type |
 |-------------------|----------|
 | `tourops_outcome = LinkSent` AND `intent_bucket = ReadyToBook` | Booking link confirmation |
-| `tourops_outcome = Resolved` AND `intent_bucket = DayOf` | Map link + pickup instructions |
-| `tourops_outcome = Resolved` AND `intent_bucket = RefundCancel` | Resolution confirmation |
+| `tourops_outcome = CalendarBooked` | Calendar link confirmation (already sent during conversation) |
+| `tourops_outcome = Answered` AND `intent_bucket = DayOf` | Map link + pickup instructions |
+| `tourops_outcome = Answered` AND `intent_bucket = RefundCancel` | Resolution confirmation |
 | `tourops_outcome = FollowUpQueued` AND `intent_bucket = Discovery` | Value recap + link |
-| `tourops_outcome = ConsultationBooked` (V6.0) | Consultation confirmation (calendar details) |
-| `tourops_outcome = TaskCreated` (V6.0) | Task acknowledgment ("our team received your request") |
-| `tourops_next_best_action = AwaitScheduledCall` | Scheduling link — `{{custom_value.callback_scheduling_link}}` |
-| Any → Escalated (Tier 3) | Human follow-up notice |
+| Any → Escalated | Human follow-up notice |
 | `tourops_lifecycle_stage = Abandoned` | Nurture — gentle nudge |
 
 ### SMS Rules
@@ -647,7 +617,9 @@ Conversation AI uses a **Router + Module architecture**. The Master AI Splitter 
 
 # Layer 8: Human Handoff Model
 
-When AI escalates to a human, the handoff must be frictionless for operators.
+When AI escalates to a human (Tier 3 only), the handoff must be frictionless for operators.
+
+**Note:** Tier 2 (Calendar Booking) does NOT trigger the handoff model. Work state stays AI_ACTIVE, no task is created, and no tags are applied. The customer books a time slot and the operator sees it on their calendar like any other appointment.
 
 ## Operator UX Rules (Non-Negotiable)
 
@@ -657,7 +629,7 @@ When AI escalates to a human, the handoff must be frictionless for operators.
 4. **During an open handoff task, the bot must be inactive** to prevent AI from interrupting.
 5. **Task completion triggers automated disposition stamping** and re-enables the AI.
 
-## Handoff Flow
+## Handoff Flow (Tier 3 Only)
 
 ### Step 1: AI Escalates
 1. Customer-facing: "I'm escalating this to our team right now."
@@ -702,17 +674,6 @@ All enum values are defined in **TourOps_Canonical_Schema** (the authoritative d
 - All enum changes require: schema version increment, regression test update, documentation update
 - Values are case-sensitive — use exactly as documented
 
-**V6.0 Pending Enum Additions (after BB proof of concept):**
-
-Two new `tourops_outcome` values are in use in V6.0 builds but are not yet formally added to Schema Contract 3. They will be added via change control after validation in BB production:
-
-| Value | Used When |
-|-------|-----------|
-| `ConsultationBooked` | Caller scheduled a consultation via Book Appointment action or consultation link (Play D, Play F) |
-| `TaskCreated` | AI collected full details for ReservationChange or RefundCancel and created a GHL task (Play C, Play E) |
-
-Until the schema change is made, these values may be used in V6.0 builds but must be tracked and validated before Schema Contract 4 is published.
-
 ---
 
 # Appendix B: Minimum Required Capabilities
@@ -723,10 +684,11 @@ Until the schema change is made, these values may be used in V6.0 builds but mus
 | Persistent contact memory | Store and retrieve durable lifecycle fields across conversations |
 | Knowledge base query | Query structured knowledge before answering factual questions |
 | SMS delivery | Send SMS messages triggered by conversation outcomes |
+| Calendar booking | Send calendar link via SMS for Tier 2 callbacks/consultations |
 | Conversation auto-summary | Generate summaries of completed conversations for narrative memory |
 | Field update at disposition | Update contact fields at end of each conversation |
 | AI suppression control | Check `tourops_work_state` before responding; suppress when HUMAN_ACTIVE or PAUSED |
-| Human escalation | Route conversations to human staff with context preserved |
+| Human escalation | Route conversations to human staff with context preserved (Tier 3 only) |
 | Workflow triggers | Trigger follow-up actions based on conversation events |
 | Interaction timestamp | Record datetime of each interaction |
 | Channel identification | Identify and record the communication channel |
@@ -774,14 +736,13 @@ This document is reviewed:
 | r07 | 2026-02-14 | Hard separation versioning model. Schema is sole contract authority. Non-Alignment Rule added. | Todd Abrams / Claude |
 | r08 | 2026-02-17 | Memory Injection marked IMPLEMENTED. Auto-summaries production details. 8-module system documented. Cross-channel memory architecture. | Todd Abrams / Claude |
 | r09 | 2026-02-20 | Standard 11: Work State added to memory injection header. Required fields per module clarified. Recipe 5 reference updated. | Todd Abrams / Claude |
-| r10 | 2026-03-03 | Three-tier escalation model. Standard 14 updated: Tier 2 (scheduled callback) now default standard path before Tier 3 (ASAP). Standard 15 updated: KB miss offers scheduling first. Play C + Play E updated to include scheduling offer. SMS Pairing updated. Escalation threshold raised — "uncertain or risky" catchall removed. | Todd Abrams / Claude |
-| r11 | 2026-03-03 | V6.0 build spec integrated. Play B: 10+ group size fork added. Play C: task creation step + full slot list added. Play D: consultation fallback added. Play E: booking protection ask + task creation added. Play F: renamed Private Tours & Large Groups, expanded to all private event types, consultation booking added. Standard 16: group size fork at 10. SMS Pairing: ConsultationBooked + TaskCreated triggers added. Appendix A: V6.0 pending enum values documented. | Todd Abrams / Claude |
+| r10 | 2026-03-03 | Three-Tier Escalation Model (Tier 1: AI resolves, Tier 2: Calendar booking, Tier 3: Human escalation). Calendar booking added to plays C/D/E/F/H. Standard 7 updated to calendar-first on confidence fallback. Standard 14 replaced with Three-Tier model. Standard 15 updated to offer calendar before escalating. SMS pairing updated with CalendarBooked. Calendar booking added to minimum capabilities. Layer 8 clarified as Tier 3 only. | Todd Abrams / Claude |
 
 ---
 
-**End of TourOps Conversation Design Standard — Doc Revision r11**
+**End of TourOps Conversation Design Standard — Doc Revision r10**
 
 ---
-*Doc Revision: r11 | Last Updated: 2026-03-03 | Owner: Todd Abrams*
+*Doc Revision: r10 | Last Updated: 2026-03-03 | Owner: Todd Abrams*
 *Companion Documents: TourOps_Canonical_Schema, TourOps_GHL_Platform_Capabilities, TourOps_GHL_Implementation_Recipes*
 *Approval Required: System Owner (Todd Abrams)*
