@@ -98,10 +98,17 @@ Loop stops when `tourops_work_state` changes to `AI_ACTIVE` (task completed). St
 
 ### Standard (Corporate / Refund / Edge Case)
 
-1. Read transcript
-2. Respond same business day
-3. Handle per policy or route to Todd for policy exception
-4. Complete task
+Standard escalations now arrive in two forms — check the contact before calling:
+
+**Pre-Scheduled (AwaitScheduledCall):** Customer already picked a time via scheduling link. Check the calendar for the scheduled slot. Show up prepared with the transcript context.
+
+**ASAP (AwaitHumanFollowUp):** Customer declined scheduling. Respond same business day.
+
+1. Read transcript — know the issue before you reach out
+2. If scheduled → show up at the booked time ready to resolve
+3. If ASAP → call or text customer same business day
+4. Handle per policy or route to Todd for policy exception
+5. Complete task
 
 ---
 
@@ -155,5 +162,6 @@ The system handles all of the following automatically upon task completion:
 | P0b Legal | Immediate | 30 min |
 | DayOf | 5 min | Resolved before tour time |
 | Human Request | 30 min | Same business day |
-| Standard | Same business day | 2 business days |
+| Standard — Scheduled | Show up at booked time | At booked appointment |
+| Standard — ASAP | Same business day | 2 business days |
 | QA Critical Failure (live call) | 1 hour | Fix/rollback same day |

@@ -1,7 +1,7 @@
 # TourOps Conversation Design Standard
 
-**Doc Revision:** r09
-**Last Updated:** 2026-02-20
+**Doc Revision:** r10
+**Last Updated:** 2026-03-03
 **Status:** Behavioral Specification (Stable)
 **Scope:** All TourOps AI conversation systems (Voice AI & Conversation AI)
 
@@ -215,11 +215,12 @@ Each intent bucket maps to a modular "script play" — a self-contained conversa
 3. Collect required slots ONE at a time
 4. If policy question arises → Query Policies KB
 5. Present policy neutrally: "Our standard policy is [X], but our team will review your specific request."
-6. Confirm handoff: "I'm passing this to our team to review. What's the best callback number?"
-7. Reassure: "They'll follow up within [timeframe]."
+6. Offer scheduling: "I can have someone reach out at a set time to review this with you — want me to send you a link to pick a time?"
+   - YES → send `{{custom_value.callback_scheduling_link}}` → `tourops_next_best_action = AwaitScheduledCall` → end cleanly
+   - NO → collect callback number → "Our team will reach out soon." → Tier 3
 
-**Success Outcome:** Details collected, escalated to human
-**Disposition:** `tourops_outcome = Escalated`, `tourops_next_best_action = AwaitHumanFollowUp`
+**Success Outcome:** Details collected, scheduling offered, escalated to human
+**Disposition:** `tourops_outcome = Escalated`, `tourops_next_best_action = AwaitScheduledCall` OR `AwaitHumanFollowUp`
 
 ---
 
@@ -268,11 +269,12 @@ Each intent bucket maps to a modular "script play" — a self-contained conversa
 4. If refund → Query Policies KB before discussing eligibility
 5. Present policy neutrally: "Our standard policy is [X]. Our team will review your specific situation."
 6. Do NOT promise refund approval
-7. Confirm handoff: "What's the best callback number?"
-8. Reassure: "Our team will review and follow up within [timeframe]."
+7. Offer scheduling: "I can have someone from our team reach out at a set time to review this with you — want me to send you a scheduling link?"
+   - YES → send `{{custom_value.callback_scheduling_link}}` → `tourops_next_best_action = AwaitScheduledCall` → end cleanly
+   - NO → collect callback number → "Our team will reach out soon." → Tier 3
 
-**Success Outcome:** Details collected, escalated to human
-**Disposition:** `tourops_outcome = Escalated`, `tourops_next_best_action = AwaitHumanFollowUp`
+**Success Outcome:** Details collected, scheduling offered, escalated to human
+**Disposition:** `tourops_outcome = Escalated`, `tourops_next_best_action = AwaitScheduledCall` OR `AwaitHumanFollowUp`
 
 ---
 
@@ -492,26 +494,41 @@ Never say "I'm texting you" without confirming they want SMS.
 
 ## Standard 14: Escalation Protocols by Priority
 
-### P0 (Safety/Legal)
+### P0 (Safety/Legal) — Tier 1, Immediate
 1. Acknowledge immediately: "I hear you. I'm escalating this to our team right now."
 2. Collect only: name, callback number, tour date, brief summary
 3. Set `tourops_work_state = HUMAN_ACTIVE`, apply tags: `Human handover` + `support-urgent`
 4. End conversation immediately (Voice: end call. SMS/WebChat: stop responding)
-5. Do NOT attempt to resolve, advise, or investigate
+5. Do NOT attempt to resolve, advise, or investigate. Do NOT offer scheduling.
 
-### P0b (Legal/Complaint)
+### P0b (Legal/Complaint) — Tier 1, Immediate
 1. Acknowledge neutrally: "I understand. I'm connecting you with our team."
 2. Collect: name, callback number, brief description
 3. Set `tourops_work_state = HUMAN_ACTIVE`, apply tags: `Human handover` + `support-urgent`
 4. End conversation
-5. Do NOT admit fault, make promises, or discuss policy
+5. Do NOT admit fault, make promises, or discuss policy. Do NOT offer scheduling.
 
-### Standard Escalation
-1. "That's a specific situation. I'm going to flag this for our team."
+### Standard Escalation — Three-Tier Model
+
+**Tier 2 — Scheduled Callback (Default Standard Path)**
+When AI cannot resolve a non-emergency situation:
+1. Attempt KB resolution first — if KB has an answer, use it. Do not escalate just because a topic is sensitive.
+2. Only escalate when genuinely unresolvable.
+3. Offer scheduling: "I can have someone from our team reach out at a set time — want me to send you a link to pick a time?"
+4. YES → send `{{custom_value.callback_scheduling_link}}` → confirm phone number → send → set disposition → end cleanly
+   - `tourops_outcome = Escalated`, `tourops_next_best_action = AwaitScheduledCall`
+5. NO → fall to Tier 3
+
+**Tier 3 — ASAP Callback (Fallback)**
+Customer declines scheduling, or situation is urgent but not P0/P0b:
+1. "That's a specific situation — I'm going to flag this for our team."
 2. Collect: name (if missing), callback number, brief context
 3. Set `tourops_work_state = HUMAN_ACTIVE`, apply tag: `Human handover`
 4. Create task for operator
 5. End conversation: "Our team will reach out to you soon."
+   - `tourops_outcome = Escalated`, `tourops_next_best_action = AwaitHumanFollowUp`
+
+**Threshold Rule:** The AI holds more ground before escalating. "Uncertain or risky" is not sufficient. Escalate only when KB genuinely cannot answer AND the AI has attempted resolution.
 
 ---
 
@@ -519,9 +536,9 @@ Never say "I'm texting you" without confirming they want SMS.
 If KB query returns no relevant result:
 
 1. Do NOT guess or invent
-2. Say: "I want to make sure I give you the right information — let me have our team follow up on that."
-3. Collect: name (if missing), callback number
-4. Escalate
+2. Try Tier 2 first: "I want to make sure you get the right answer — I can have someone from our team reach out at a set time. Want me to send you a scheduling link?"
+3. YES → send `{{custom_value.callback_scheduling_link}}` → end cleanly
+4. NO → "Let me flag this for our team." → collect name (if missing) + callback number → Tier 3 escalation
 
 ---
 
@@ -535,7 +552,8 @@ Every conversation outcome must trigger an appropriate follow-up SMS within 60 s
 | `tourops_outcome = Resolved` AND `intent_bucket = DayOf` | Map link + pickup instructions |
 | `tourops_outcome = Resolved` AND `intent_bucket = RefundCancel` | Resolution confirmation |
 | `tourops_outcome = FollowUpQueued` AND `intent_bucket = Discovery` | Value recap + link |
-| Any → Escalated | Human follow-up notice |
+| `tourops_next_best_action = AwaitScheduledCall` | Scheduling link confirmation |
+| Any → Escalated (Tier 3) | Human follow-up notice |
 | `tourops_lifecycle_stage = Abandoned` | Nurture — gentle nudge |
 
 ### SMS Rules
@@ -708,6 +726,7 @@ This document is reviewed:
 | r06 | 2026-02-14 | P0/P0b protocol refinements. Standard 10 separated internal/customer-facing. SMS consent check added. | Todd Abrams / Claude |
 | r07 | 2026-02-14 | Hard separation versioning model. Schema is sole contract authority. Non-Alignment Rule added. | Todd Abrams / Claude |
 | r08 | 2026-02-17 | Memory Injection marked IMPLEMENTED. Auto-summaries production details. 8-module system documented. Cross-channel memory architecture. | Todd Abrams / Claude |
+| r10 | 2026-03-03 | Three-tier escalation model. Standard 14 updated: Tier 2 (scheduled callback) now default standard path before Tier 3 (ASAP). Standard 15 updated: KB miss offers scheduling first. Play C + Play E updated to include scheduling offer. SMS Pairing updated. Escalation threshold raised — "uncertain or risky" catchall removed. | Todd Abrams / Claude |
 | r09 | 2026-02-20 | Standard 11: Work State added to memory injection header. Required fields per module clarified. Recipe 5 reference updated. | Todd Abrams / Claude |
 
 ---

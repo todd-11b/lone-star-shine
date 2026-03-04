@@ -34,13 +34,13 @@
 - Day-of logistics (meeting points, timing, running late)
 - Policy questions (cancellation, refunds, weather, age restrictions)
 - Private tour / group event inquiries
+- Scheduling callback appointments with the team (via `{{custom_value.callback_scheduling_link}}`)
 - Escalation for safety, legal, complaints
 
 **Out of Scope (escalate immediately):**
 - Processing refunds
 - Modifying existing bookings
 - Providing or emailing full itineraries
-- Scheduling calls
 - Quoting custom private tour prices
 - Anything not in the Knowledge Base
 
@@ -175,6 +175,10 @@
 
 **QA Grader Fields (Contract 3):**
 - `tourops_last_score`, `tourops_last_review_date`, `tourops_issue_count`
+
+**Callback Scheduling:**
+- `{{custom_value.callback_scheduling_link}}` = `https://links.opsaiworks.com/widget/booking/TKYfczjDev5Is1yOu9Vx`
+- Used by Hope and Conversation AI when offering a scheduled callback. Must be set in GHL Custom Values before V6.0 deploys.
 
 **Barley Bus Operator-Specific Fields (Voice AI — captured silently when offered):**
 - `CALL_DateRequested`, `CALL_GroupSize`, `VAI_Occasion`, `CALL_PickupArea`
