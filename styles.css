@@ -9,9 +9,11 @@
 :root {
   --navy: #1D2939;
   --blue: #0071E3;
+  --blue-light: #EBF5FF;
   --red: #E8364F;
   --red-dark: #CC2D43;
   --teal: #34C0E8;
+  --teal-light: #E8F9FE;
   --white: #FFFFFF;
   --cloud: #F5F5F7;
   --black: #1D1D1F;
@@ -95,7 +97,7 @@ p { line-height: 1.65; color: var(--gray); }
   white-space: nowrap;
 }
 .btn-primary {
-  background: var(--red);
+  background: linear-gradient(135deg, var(--red), #D42E5A);
   color: var(--white);
   border-color: var(--red);
 }
@@ -130,7 +132,7 @@ p { line-height: 1.65; color: var(--gray); }
 
 /* --- Offer Bar --- */
 .offer-bar {
-  background: var(--navy);
+  background: linear-gradient(90deg, var(--navy) 0%, #1a3a5c 50%, var(--navy) 100%);
   color: var(--white);
   text-align: center;
   padding: 10px 24px;
@@ -260,7 +262,7 @@ p { line-height: 1.65; color: var(--gray); }
 .hero {
   position: relative;
   padding: 96px 0 80px;
-  background: linear-gradient(135deg, var(--cloud) 0%, var(--white) 100%);
+  background: linear-gradient(160deg, var(--blue-light) 0%, var(--white) 60%, var(--teal-light) 100%);
   overflow: hidden;
 }
 .hero::before {
@@ -270,7 +272,7 @@ p { line-height: 1.65; color: var(--gray); }
   right: 10%;
   font-size: 200px;
   color: var(--blue);
-  opacity: 0.05;
+  opacity: 0.06;
   pointer-events: none;
 }
 .hero .container {
@@ -284,13 +286,14 @@ p { line-height: 1.65; color: var(--gray); }
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(0,113,227,0.08);
+  background: linear-gradient(135deg, rgba(0,113,227,0.1), rgba(52,192,232,0.1));
   color: var(--blue);
   font-size: 0.8125rem;
   font-weight: 600;
   padding: 6px 14px;
   border-radius: 100px;
   margin-bottom: 24px;
+  border: 1px solid rgba(0,113,227,0.12);
 }
 .hero-badge::before { content: '⚡'; }
 .hero h1 { margin-bottom: 20px; }
@@ -318,11 +321,12 @@ p { line-height: 1.65; color: var(--gray); }
   align-items: center;
   gap: 6px;
   font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--navy);
+  font-weight: 600;
+  color: var(--blue);
   background: var(--white);
-  padding: 8px 14px;
+  padding: 8px 16px;
   border-radius: 100px;
+  border: 1px solid rgba(0,113,227,0.15);
   box-shadow: var(--shadow-sm);
 }
 .trust-badge .icon { color: var(--blue); font-size: 1rem; }
@@ -502,7 +506,7 @@ input[type="range"]::-moz-range-thumb {
 /* --- Social Proof --- */
 .social-proof {
   padding: 64px 0;
-  background: var(--cloud);
+  background: var(--blue-light);
 }
 .proof-grid {
   display: grid;
@@ -524,7 +528,7 @@ input[type="range"]::-moz-range-thumb {
 .proof-number {
   font-size: 2.25rem;
   font-weight: 800;
-  color: var(--navy);
+  color: var(--blue);
   margin-bottom: 4px;
 }
 .proof-number .gold { color: var(--blue); }
@@ -574,7 +578,7 @@ input[type="range"]::-moz-range-thumb {
 /* --- How It Works --- */
 .how-it-works {
   padding: 96px 0;
-  background: var(--cloud);
+  background: var(--teal-light);
 }
 .steps-grid {
   display: grid;
@@ -589,7 +593,8 @@ input[type="range"]::-moz-range-thumb {
   left: 16.67%;
   right: 16.67%;
   height: 2px;
-  background: var(--border);
+  background: linear-gradient(90deg, var(--blue), var(--teal));
+  opacity: 0.3;
 }
 .step {
   text-align: center;
@@ -601,6 +606,7 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 50%;
   background: var(--white);
   border: 3px solid var(--blue);
+  box-shadow: 0 4px 16px rgba(0,113,227,0.15);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -669,7 +675,7 @@ input[type="range"]::-moz-range-thumb {
 /* --- Pricing --- */
 .pricing {
   padding: 96px 0;
-  background: var(--cloud);
+  background: var(--blue-light);
 }
 .pricing-grid {
   display: grid;
@@ -782,7 +788,7 @@ input[type="range"]::-moz-range-thumb {
 /* --- Reviews --- */
 .reviews {
   padding: 96px 0;
-  background: var(--cloud);
+  background: var(--teal-light);
 }
 .reviews-grid {
   display: grid;
@@ -847,16 +853,17 @@ input[type="range"]::-moz-range-thumb {
 }
 .area-tag {
   padding: 12px 16px;
-  background: var(--cloud);
+  background: var(--blue-light);
   border-radius: var(--radius-sm);
   text-align: center;
   font-weight: 500;
   font-size: 0.9375rem;
   color: var(--navy);
   transition: all var(--transition);
+  border: 1px solid rgba(0,113,227,0.08);
 }
 .area-tag:hover {
-  background: var(--navy);
+  background: var(--blue);
   color: var(--white);
 }
 .area-text {
@@ -870,7 +877,7 @@ input[type="range"]::-moz-range-thumb {
 /* --- FAQ --- */
 .faq {
   padding: 96px 0;
-  background: var(--cloud);
+  background: var(--blue-light);
 }
 .faq-list {
   max-width: 720px;
