@@ -1,1229 +1,805 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TourOps — Never Miss Another Booking Inquiry</title>
-<meta name="description" content="TourOps ensures every booking inquiry gets answered, followed up, and moved toward a booking — automatically. Built by a tour operator, for tour operators.">
-<meta property="og:title" content="TourOps — Never Miss Another Booking Inquiry">
-<meta property="og:description" content="24/7 AI voice and conversation coverage for tour operators. Stop losing bookings to missed calls, texts, and DMs.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://touropsai.com">
-<!-- TODO: Add og:image once you have a social preview image -->
-<!-- <meta property="og:image" content="https://touropsai.com/og-image.jpg"> -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="TourOps — Never Miss Another Booking Inquiry">
-<meta name="twitter:description" content="24/7 AI voice and conversation coverage for tour operators. Stop losing bookings to missed calls, texts, and DMs.">
-<link rel="canonical" href="https://touropsai.com">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lone Star Shine — Premium Home Cleaning in San Antonio, TX</title>
+  <meta name="description" content="Lone Star Shine offers premium residential cleaning services in San Antonio, TX. Licensed, insured, background-checked cleaners. Get your free quote today!">
+  <meta property="og:title" content="Lone Star Shine — Premium Home Cleaning in San Antonio, TX">
+  <meta property="og:description" content="Professional home cleaning trusted by 500+ San Antonio homeowners. Licensed, insured, satisfaction guaranteed. Get $25 off your first deep clean.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://lonestarshine.com">
+  <meta property="og:image" content="https://picsum.photos/1200/630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Lone Star Shine — Premium Home Cleaning in San Antonio, TX">
+  <meta name="twitter:description" content="Professional home cleaning trusted by 500+ San Antonio homeowners. Get $25 off your first deep clean.">
+  <link rel="canonical" href="https://lonestarshine.com">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 
-<!-- TODO: PASTE GHL TRACKING SCRIPT HERE -->
-<!-- Get it from GHL: Settings → Tracking Code → copy script -->
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --blue: #4F46E5; --blue-dark: #3730a3; --blue-light: #EEF2FF;
-    --black: #1d1d1f; --gray: #6e6e73; --light: #f5f5f7;
-    --border: #e5e5e5; --white: #fff;
-    --sidebar: #1e1b4b;
+  <!-- LocalBusiness Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": "https://lonestarshine.com",
+    "name": "Lone Star Shine",
+    "description": "Premium residential cleaning services in San Antonio, TX",
+    "url": "https://lonestarshine.com",
+    "telephone": "(210) 555-0199",
+    "email": "hello@lonestarshine.com",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "123 Alamo Plaza",
+      "addressLocality": "San Antonio",
+      "addressRegion": "TX",
+      "postalCode": "78205",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 29.4241,
+      "longitude": -98.4936
+    },
+    "openingHours": ["Mo-Fr 08:00-18:00", "Sa 09:00-16:00"],
+    "priceRange": "$$",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "500"
+    },
+    "areaServed": [
+      "San Antonio", "Alamo Heights", "Stone Oak", "Helotes",
+      "Boerne", "Schertz", "Cibolo", "Universal City",
+      "Converse", "Live Oak", "New Braunfels"
+    ]
   }
-  html { scroll-behavior: smooth; }
-  body { font-family: 'Inter', sans-serif; color: var(--black); background: var(--white); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-  .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
-  .container--narrow { max-width: 720px; margin: 0 auto; padding: 0 40px; }
-
-  /* NAV */
-  nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 18px 0; }
-  nav .container { display: flex; align-items: center; justify-content: space-between; }
-  .nav-logo { font-size: 21px; font-weight: 800; color: var(--blue); letter-spacing: -0.5px; }
-  .nav-logo span { color: var(--black); }
-
-  .btn { display: inline-block; padding: 12px 24px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.2s; border: none; font-family: 'Inter', sans-serif; }
-  .btn-primary { background: var(--blue); color: var(--white); }
-  .btn-primary:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(79,70,229,0.3); }
-  .btn-white { background: var(--white); color: var(--blue); font-weight: 700; }
-  .btn-white:hover { background: #f0f0ff; transform: translateY(-1px); }
-  .btn-sm { padding: 10px 20px; font-size: 14px; }
-  .btn-lg { padding: 17px 36px; font-size: 17px; border-radius: 10px; }
-  .btn-full { width: 100%; text-align: center; display: block; }
-
-  .label { display: inline-block; font-size: 14px; font-weight: 700; letter-spacing: 2.2px; text-transform: uppercase; color: var(--blue); margin-bottom: 16px; }
-  h1 { font-size: clamp(40px, 6vw, 72px); font-weight: 900; letter-spacing: -2px; line-height: 1.02; }
-  h2 { font-size: clamp(30px, 4vw, 48px); font-weight: 800; letter-spacing: -1.2px; line-height: 1.08; }
-  p { font-size: 17px; line-height: 1.75; color: var(--gray); }
-
-  /* HERO */
-  #hero { padding: 130px 0 110px; text-align: center; }
-  #hero h1 { margin-bottom: 28px; }
-  #hero .subhead { font-size: 21px; color: var(--gray); margin-bottom: 36px; }
-  #hero .body { max-width: 560px; margin: 0 auto 40px; font-size: 18px; }
-  #hero .trust { font-size: 14px; font-style: italic; color: var(--gray); margin-bottom: 44px; }
-  .hero-demo-btn { max-width: 380px; margin: 0 auto 10px; }
-  .hero-sub-note { font-size: 13px; color: var(--gray); margin-bottom: 48px; text-align: center; }
-  .trust-strip { display: inline-flex; gap: 36px; flex-wrap: wrap; justify-content: center; background: var(--light); border-radius: 50px; padding: 16px 36px; }
-  .trust-strip span { font-size: 13px; font-weight: 600; color: var(--gray); white-space: nowrap; }
-  .trust-strip span::before { content: "✓ "; color: var(--blue); font-weight: 800; }
-
-  /* LOGO SCROLL */
-  #logo-scroll { padding: 40px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; }
-  .logo-track { display: flex; align-items: center; gap: 64px; animation: scroll 28s linear infinite; width: max-content; }
-  .logo-track:hover { animation-play-state: paused; }
-  @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  .logo-item { font-size: 15px; font-weight: 700; color: #9ca3af; white-space: nowrap; transition: color 0.2s; }
-  .logo-item:hover { color: var(--blue); }
-  .logo-dot { width: 4px; height: 4px; background: var(--border); border-radius: 50%; flex-shrink: 0; }
-
-  /* SECTIONS */
-  section { padding: 110px 0; }
-  .section-alt { background: var(--light); }
-
-  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
-  .split.reverse { direction: ltr; }
-  .split.reverse > * { direction: ltr; }
-  .split-text h2 { margin-bottom: 24px; }
-  .split-text p { margin-bottom: 18px; }
-  .split-lines { margin: 28px 0; border-left: 3px solid var(--blue); padding-left: 24px; }
-  .split-lines p { font-size: 19px; font-weight: 600; color: var(--black); line-height: 2.1; }
-  .big-callout { font-size: clamp(20px, 2.5vw, 26px) !important; font-weight: 800 !important; color: var(--black) !important; line-height: 1.3 !important; }
-  .img-placeholder { width: 100%; aspect-ratio: 4/3; background: var(--border); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--gray); font-size: 14px; font-weight: 500; }
-
-  /* CALCULATOR */
-  #calculator { padding: 110px 0; }
-  #calculator .header { text-align: center; margin-bottom: 56px; }
-  #calculator .header h2 { margin-bottom: 12px; }
-  .calc-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 24px; padding: 52px; box-shadow: 0 12px 48px rgba(0,0,0,0.07); }
-  .calc-inputs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
-  .calc-field label { display: flex; justify-content: space-between; align-items: baseline; font-size: 11px; font-weight: 700; color: var(--black); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.8px; }
-  .calc-field label .val { font-size: 20px; font-weight: 800; color: var(--blue); text-transform: none; letter-spacing: -0.5px; }
-  input[type=range] { -webkit-appearance: none; width: 100%; height: 4px; background: var(--border); border-radius: 4px; outline: none; cursor: pointer; }
-  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; background: var(--blue); border-radius: 50%; cursor: pointer; box-shadow: 0 2px 8px rgba(79,70,229,0.4); transition: transform 0.15s; }
-  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
-  .calc-field .hint { font-size: 12px; color: var(--gray); margin-top: 10px; }
-  .calc-divider { height: 1px; background: var(--border); margin: 0 0 48px; }
-  .calc-result { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
-  .result-box { border-radius: 16px; padding: 32px 28px; }
-  .result-box.loss { background: #fef2f2; border: 1.5px solid #fecaca; }
-  .result-box.cost { background: #f0fdf4; border: 1.5px solid #bbf7d0; }
-  .result-box.saving { background: var(--blue-light); border: 1.5px solid #c7d2fe; grid-column: 1/-1; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-  .result-content { flex: 1; }
-  .result-label { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 8px; }
-  .result-box.loss .result-label { color: #dc2626; }
-  .result-box.cost .result-label { color: #16a34a; }
-  .result-box.saving .result-label { color: var(--blue); }
-  .result-value { font-size: clamp(32px, 4vw, 48px); font-weight: 900; letter-spacing: -1.5px; line-height: 1; }
-  .result-box.loss .result-value { color: #dc2626; }
-  .result-box.cost .result-value { color: #16a34a; }
-  .result-box.saving .result-value { color: var(--blue); }
-  .result-sub { font-size: 13px; color: var(--gray); margin-top: 8px; line-height: 1.5; }
-  .calc-note { font-size: 13px; color: var(--gray); text-align: center; font-style: italic; }
-
-  /* BUILT INSTEAD */
-  #built { background: var(--white); text-align: center; }
-  #built .label { color: var(--blue); }
-  #built h2 { color: var(--black); max-width: 700px; margin: 0 auto 48px; }
-  .stacked-lines p { font-size: clamp(22px, 3vw, 38px); font-weight: 800; color: var(--blue); line-height: 1.7; letter-spacing: -0.5px; min-height: 1.7em; }
-  .stacked-lines .cursor { display: inline-block; width: 3px; height: 0.9em; background: var(--blue); margin-left: 2px; vertical-align: text-bottom; animation: blink-caret 0.6s step-end infinite; }
-  @keyframes blink-caret { 50% { background: transparent; } }
-  #built .sub { font-size: 18px; color: var(--gray); margin: 32px auto 56px; max-width: 560px; }
-  .works-with { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: rgba(255,255,255,0.08); border-radius: 16px; overflow: hidden; max-width: 700px; margin: 0 auto; border: 1px solid rgba(255,255,255,0.08); }
-  .works-item { background: rgba(255,255,255,0.04); padding: 28px 24px; text-align: center; transition: background 0.2s; }
-  .works-item:hover { background: rgba(255,255,255,0.08); }
-  .works-icon { font-size: 24px; margin-bottom: 10px; }
-  .works-title { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
-  .works-sub { font-size: 12px; color: rgba(255,255,255,0.4); }
-
-  /* DEMO */
-  #demo { padding: 100px 0; }
-  #demo .demo-banner {
-    background: linear-gradient(135deg, #4F46E5 0%, #3730a3 100%);
-    border-radius: 20px;
-    padding: 56px 44px;
-    display: flex;
-    align-items: center;
-    gap: 48px;
-    box-shadow: 0 8px 40px rgba(79,70,229,0.25);
-  }
-  #demo .demo-left { flex: 1; color: white; }
-  #demo .demo-left h2 {
-    font-size: clamp(26px, 3.5vw, 36px);
-    font-weight: 800;
-    line-height: 1.2;
-    margin-bottom: 14px;
-    color: white;
-  }
-  #demo .demo-left > p {
-    font-size: 16px;
-    color: rgba(255,255,255,0.75);
-    margin-bottom: 24px;
-    line-height: 1.6;
-    max-width: none;
-  }
-  #demo .demo-features {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  #demo .demo-feature {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    color: rgba(255,255,255,0.85);
-  }
-  #demo .demo-feature svg { color: #34d399; flex-shrink: 0; }
-  #demo .demo-right { flex-shrink: 0; }
-  #demo .demo-phone {
-    width: 300px;
-    max-width: 100%;
-    background: var(--white);
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    overflow: hidden;
-  }
-  #demo .demo-phone-top {
-    background: var(--blue);
-    padding: 14px 18px 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  #demo .demo-phone-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  #demo .demo-phone-avatar svg { color: white; }
-  #demo .demo-phone-name { color: white; font-size: 13px; font-weight: 600; }
-  #demo .demo-phone-status {
-    color: rgba(255,255,255,0.7);
-    font-size: 11px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  #demo .demo-phone-status .dot {
-    width: 6px; height: 6px; border-radius: 50%; background: #34d399;
-    animation: demo-pulse 2s ease infinite;
-  }
-  @keyframes demo-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-  #demo .demo-phone-body {
-    padding: 28px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    text-align: center;
-  }
-  #demo .demo-voice-ring {
-    width: 72px; height: 72px; border-radius: 50%;
-    background: var(--blue-light);
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-  }
-  #demo .demo-voice-ring::before {
-    content: ''; position: absolute; inset: -8px; border-radius: 50%;
-    border: 2px solid var(--blue); opacity: 0.2;
-    animation: demo-ring 2s ease-out infinite;
-  }
-  #demo .demo-voice-ring::after {
-    content: ''; position: absolute; inset: -18px; border-radius: 50%;
-    border: 2px solid var(--blue); opacity: 0.1;
-    animation: demo-ring 2s ease-out infinite 0.5s;
-  }
-  @keyframes demo-ring { 0% { transform: scale(0.95); opacity: 0.3; } 100% { transform: scale(1.1); opacity: 0; } }
-  #demo .demo-voice-ring svg { color: var(--blue); }
-  #demo .demo-phone-prompt { font-size: 14px; font-weight: 600; color: var(--black); }
-  #demo .demo-phone-hint { font-size: 12px; color: var(--gray); margin-top: -6px; }
-  #demo .demo-talk-btn {
-    background: var(--blue); color: white; border: none;
-    padding: 12px 28px; border-radius: 10px;
-    font-size: 14px; font-weight: 600; cursor: pointer;
-    display: inline-flex; align-items: center; gap: 8px;
-    font-family: inherit; text-decoration: none;
-    transition: background 0.2s;
-  }
-  #demo .demo-talk-btn:hover { background: var(--blue-dark); }
-  #demo .demo-phone-footer {
-    padding: 10px 18px;
-    border-top: 1px solid var(--border);
-    text-align: center;
-  }
-  #demo .demo-phone-footer span { font-size: 10px; color: var(--gray); }
-
-  @media (max-width: 768px) {
-    #demo .demo-banner {
-      flex-direction: column;
-      padding: 40px 24px;
-      gap: 32px;
-      border-radius: 0;
-    }
-    #demo { padding: 0; }
-    #demo .demo-phone { width: 280px; }
-  }
-
-  /* Hide default GHL floating chat bubble — we trigger it from our custom button */
-  #lc_chat_layout,
-  [id*="chat-widget"] > div:first-child,
-  .lc_text_widget_open {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-  }
-
-  /* QUOTE */
-  #quote .container { display: grid; grid-template-columns: 1fr 2fr; gap: 80px; align-items: center; }
-  .quote-accent { font-size: 160px; font-weight: 900; color: var(--blue-light); line-height: 0.8; font-style: italic; }
-  blockquote { font-size: clamp(22px, 3vw, 34px); font-weight: 800; color: var(--black); line-height: 1.3; letter-spacing: -0.5px; }
-  blockquote em { color: var(--blue); font-style: normal; }
-
-  /* PRICING */
-  #pricing { background: var(--light); text-align: center; }
-  #pricing .header { margin-bottom: 56px; }
-  #pricing .header h2 { margin-bottom: 12px; }
-  .pricing-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 24px; padding: 52px; max-width: 580px; margin: 0 auto; box-shadow: 0 12px 48px rgba(0,0,0,0.07); text-align: left; }
-  .pricing-label { font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: var(--blue); margin-bottom: 10px; }
-  .pricing-price { font-size: 64px; font-weight: 900; letter-spacing: -2px; color: var(--black); line-height: 1; margin-bottom: 6px; }
-  .pricing-price span { font-size: 20px; font-weight: 500; color: var(--gray); }
-  .pricing-sub { font-size: 15px; color: var(--gray); margin-bottom: 36px; }
-  .pricing-divider { height: 1px; background: var(--border); margin: 28px 0; }
-  .feature-list { list-style: none; }
-  .feature-list li { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; font-size: 15px; color: var(--black); font-weight: 500; border-bottom: 1px solid var(--border); }
-  .feature-list li:last-child { border-bottom: none; }
-  .feature-list li::before { content: "✓"; color: var(--blue); font-weight: 900; font-size: 14px; flex-shrink: 0; margin-top: 2px; }
-  .usage { font-size: 13px; color: var(--gray); text-align: center; margin: 20px 0 8px; }
-  .onboarding-note { font-size: 14px; color: var(--gray); margin-bottom: 6px; }
-  .billing-note { font-size: 13px; color: var(--gray); margin-bottom: 32px; font-style: italic; }
-
-  /* FAQ */
-  #faq h2 { text-align: center; margin-bottom: 52px; }
-  .faq-item { border-bottom: 1px solid var(--border); }
-  .faq-q { padding: 24px 0; font-size: 17px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; color: var(--black); }
-  .faq-q:hover { color: var(--blue); }
-  .faq-q.open .faq-icon { transform: rotate(45deg); }
-  .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
-  .faq-a.open { max-height: 400px; }
-  .faq-a p { padding: 0 0 20px; color: var(--gray); font-size: 15px; line-height: 1.7; }
-  .faq-icon { font-size: 22px; color: var(--blue); transition: transform 0.25s; flex-shrink: 0; margin-left: 24px; }
-  .faq-item.open .faq-a { max-height: 600px; }
-  .faq-item.open .faq-icon { transform: rotate(45deg); }
-
-  /* FOUNDER */
-  #founder .founder-photo { width: 100%; aspect-ratio: 3/4; background: var(--border); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: var(--gray); font-size: 14px; font-weight: 500; overflow: hidden; background-size: cover !important; background-position: center top !important; }
-  .founder-close { font-size: 22px !important; font-weight: 800 !important; color: var(--black) !important; margin-bottom: 32px !important; }
-
-  /* FOOTER */
-  footer { background: var(--black); padding: 48px 0; }
-  footer .container { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-  .footer-logo { font-size: 18px; font-weight: 800; color: var(--white); }
-  .footer-links a { font-size: 13px; color: rgba(255,255,255,0.4); text-decoration: none; margin-left: 24px; }
-  .footer-links a:hover { color: var(--white); }
-  .footer-copy { font-size: 13px; color: rgba(255,255,255,0.3); }
-
-  /* ── MOCKUP SHARED STYLES ── */
-  .mockup-frame { border-radius: 14px; overflow: hidden; box-shadow: 0 24px 64px rgba(0,0,0,0.13), 0 4px 16px rgba(0,0,0,0.07); border: 1px solid var(--border); background: var(--white); }
-  .chrome { background: #f8f8f8; border-bottom: 1px solid var(--border); padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
-  .chrome-dot { width: 10px; height: 10px; border-radius: 50%; }
-  .chrome-dot.r { background: #ff5f57; } .chrome-dot.y { background: #febc2e; } .chrome-dot.g { background: #28c840; }
-  .chrome-url { flex: 1; background: white; border: 1px solid var(--border); border-radius: 6px; padding: 4px 12px; font-size: 12px; color: var(--gray); margin: 0 12px; }
-  .ghl { display: flex; height: 440px; }
-  .ghl-sidebar { width: 52px; background: var(--sidebar); display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 4px; flex-shrink: 0; }
-  .ghl-nav { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; color: rgba(255,255,255,0.35); }
-  .ghl-nav.active { background: var(--blue); color: white; }
-  .ghl-content { flex: 1; display: flex; overflow: hidden; }
-  .ai-badge { background: var(--blue-light); color: var(--blue); font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; letter-spacing: 0.5px; white-space: nowrap; }
-
-  /* MOCKUP 1 */
-  .conv-list { width: 240px; border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
-  .conv-list-hdr { padding: 12px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .conv-list-hdr span { font-size: 13px; font-weight: 700; color: var(--black); }
-  .conv-search { margin: 8px; padding: 7px 10px; background: var(--light); border: 1px solid var(--border); border-radius: 7px; font-size: 12px; color: var(--gray); }
-  .conv-item { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border); }
-  .conv-item.active { background: var(--blue-light); border-left: 3px solid var(--blue); }
-  .conv-item-name { font-size: 12px; font-weight: 600; color: var(--black); display: flex; justify-content: space-between; margin-bottom: 2px; }
-  .conv-item-name span { font-weight: 400; color: var(--gray); }
-  .conv-item-preview { font-size: 11px; color: var(--gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .conv-item-preview.ai { color: var(--blue); }
-  .conv-thread { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-  .conv-thread-hdr { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-  .conv-thread-name { font-size: 13px; font-weight: 700; color: var(--black); }
-  .conv-thread-meta { font-size: 11px; color: var(--gray); }
-  .conv-msgs { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #fafafa; }
-  .msg { max-width: 78%; }
-  .msg.in { align-self: flex-start; }
-  .msg.out { align-self: flex-end; }
-  .msg-bubble { padding: 9px 13px; border-radius: 14px; font-size: 12px; line-height: 1.5; }
-  .msg.in .msg-bubble { background: white; border: 1px solid var(--border); color: var(--black); border-bottom-left-radius: 3px; }
-  .msg.out .msg-bubble { background: var(--blue); color: white; border-bottom-right-radius: 3px; }
-  .msg-meta { font-size: 10px; color: var(--gray); margin-top: 3px; }
-  .msg.out .msg-meta { text-align: right; }
-  .msg-sender { font-size: 9px; font-weight: 700; color: var(--blue); margin-bottom: 3px; letter-spacing: 0.5px; }
-
-  /* MOCKUP 2 */
-  .inbox-panel { width: 200px; background: var(--light); border-right: 1px solid var(--border); padding: 14px 0; flex-shrink: 0; overflow-y: auto; }
-  .inbox-sec-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray); padding: 0 14px 6px; margin-top: 12px; }
-  .inbox-i { padding: 7px 14px; font-size: 12px; color: var(--gray); cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
-  .inbox-i.active { background: var(--blue-light); color: var(--blue); font-weight: 600; }
-  .inbox-cnt { background: var(--blue); color: white; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 20px; }
-  .inbox-cnt.g { background: var(--border); color: var(--gray); }
-  .thread-list { flex: 1; overflow-y: auto; }
-  .thread-i { padding: 12px 14px; border-bottom: 1px solid var(--border); cursor: pointer; display: flex; gap: 10px; }
-  .thread-i:hover { background: var(--light); }
-  .t-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--blue-light); color: var(--blue); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .t-body { flex: 1; min-width: 0; }
-  .t-top { display: flex; justify-content: space-between; margin-bottom: 2px; }
-  .t-name { font-size: 12px; font-weight: 600; color: var(--black); }
-  .t-time { font-size: 10px; color: var(--gray); }
-  .t-prev { font-size: 11px; color: var(--gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .t-prev.u { color: var(--black); font-weight: 500; }
-  .ch { display: inline-block; font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 3px; margin-right: 3px; }
-  .ch.sms { background: #dcfce7; color: #15803d; }
-  .ch.call { background: #dbeafe; color: #1d4ed8; }
-  .ch.dm { background: #fce7f3; color: #9d174d; }
-  .ch.web { background: #fef9c3; color: #854d0e; }
-  .udot { width: 7px; height: 7px; background: var(--blue); border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
-
-  /* MOCKUP 3 */
-  .wf-wrap { flex: 1; padding: 20px; background: #fafafa; overflow-y: auto; }
-  .wf-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-  .wf-title { font-size: 14px; font-weight: 700; color: var(--black); }
-  .wf-status { font-size: 11px; font-weight: 600; color: #16a34a; background: #dcfce7; padding: 3px 10px; border-radius: 20px; }
-  .wf-step { display: flex; gap: 12px; }
-  .wf-line { display: flex; flex-direction: column; align-items: center; }
-  .wf-node { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
-  .wf-node.t { background: #dbeafe; } .wf-node.a { background: var(--blue-light); } .wf-node.w { background: #fef9c3; } .wf-node.d { background: #dcfce7; }
-  .wf-conn { width: 2px; background: var(--border); flex: 1; min-height: 14px; }
-  .wf-card { flex: 1; background: white; border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
-  .wf-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
-  .wf-card-title { font-size: 12px; font-weight: 700; color: var(--black); }
-  .wf-badge { font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 20px; }
-  .wf-badge.b { background: var(--blue-light); color: var(--blue); }
-  .wf-badge.y { background: #fef9c3; color: #854d0e; }
-  .wf-badge.g { background: #dcfce7; color: #15803d; }
-  .wf-card-detail { font-size: 11px; color: var(--gray); line-height: 1.4; }
-
-  /* MOCKUP 4 */
-  .cal-wrap { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-  .cal-hdr { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-  .cal-title { font-size: 13px; font-weight: 700; color: var(--black); }
-  .cal-body { flex: 1; padding: 14px; overflow-y: auto; }
-  .cal-row { display: grid; grid-template-columns: 54px 1fr; gap: 10px; margin-bottom: 6px; align-items: flex-start; }
-  .cal-time { font-size: 10px; color: var(--gray); padding-top: 8px; text-align: right; }
-  .cal-slot { min-height: 28px; border-radius: 7px; padding: 7px 10px; }
-  .cal-slot.empty { background: transparent; border: 1px dashed #e5e5e5; }
-  .cal-slot.booked { background: var(--blue-light); border: 1px solid #c7d2fe; }
-  .cal-slot.confirmed { background: #dcfce7; border: 1px solid #bbf7d0; }
-  .cal-slot-title { font-size: 11px; font-weight: 700; color: var(--blue); }
-  .cal-slot-title.g { color: #15803d; }
-  .cal-slot-sub { font-size: 10px; color: var(--gray); margin-top: 1px; }
-  .cal-badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 3px; margin-top: 3px; background: var(--blue); color: white; }
-  .cal-badge.g { background: #16a34a; }
-
-  /* MOCKUP 5 */
-  .rpt-wrap { flex: 1; padding: 20px; overflow-y: auto; background: #fafafa; }
-  .rpt-title { font-size: 15px; font-weight: 800; color: var(--black); margin-bottom: 3px; }
-  .rpt-date { font-size: 11px; color: var(--gray); margin-bottom: 18px; }
-  .rpt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  .rpt-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
-  .rpt-card-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray); margin-bottom: 6px; }
-  .rpt-card-val { font-size: 28px; font-weight: 900; letter-spacing: -1px; color: var(--black); line-height: 1; margin-bottom: 3px; }
-  .rpt-card-val.b { color: var(--blue); } .rpt-card-val.g { color: #16a34a; }
-  .rpt-card-sub { font-size: 10px; color: var(--gray); }
-  .rpt-sec { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 10px; }
-  .rpt-sec-title { font-size: 11px; font-weight: 700; color: var(--black); margin-bottom: 10px; }
-  .rpt-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 11px; }
-  .rpt-row:last-child { border-bottom: none; }
-  .rpt-row-l { color: var(--gray); } .rpt-row-v { font-weight: 700; color: var(--black); }
-  .rpt-row-v.b { color: var(--blue); } .rpt-row-v.g { color: #16a34a; }
-  .snap { background: var(--blue-light); border-radius: 8px; padding: 10px 12px; margin-bottom: 7px; }
-  .snap-time { font-size: 9px; font-weight: 700; color: var(--blue); letter-spacing: 0.5px; margin-bottom: 3px; }
-  .snap-text { font-size: 11px; color: var(--black); line-height: 1.4; }
-
-  /* RESPONSIVE */
-  @media (max-width: 900px) {
-    .split { grid-template-columns: 1fr; gap: 48px; }
-    .calc-inputs { grid-template-columns: 1fr; gap: 32px; }
-    .calc-result { grid-template-columns: 1fr; }
-    section#built div[style] { grid-template-columns: 1fr !important; }
-    .stacked-lines p { white-space: normal; }
-    section[style*="0f172a"] div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
-    .result-box.saving { flex-direction: column; }
-    .works-with { grid-template-columns: 1fr; }
-    #quote .container { grid-template-columns: 1fr; gap: 24px; }
-    .quote-accent { font-size: 80px; }
-    .ghl { height: 360px; }
-    .conv-list { width: 160px; }
-    .inbox-panel { width: 160px; }
-  }
-  @media (max-width: 600px) {
-    .container, .container--narrow { padding: 0 24px; }
-    .trust-strip { padding: 14px 20px; gap: 16px; }
-    .calc-card { padding: 32px 24px; }
-    .pricing-card { padding: 36px 28px; }
-    footer .container { flex-direction: column; text-align: center; }
-    .ghl-sidebar { display: none; }
-  }
-
-  /* WORKS-WITH BAR */
-  #works-bar { background: var(--blue); padding: 18px 0; }
-  .works-bar-text { font-size: 17px; font-weight: 700; color: var(--white); text-align: center; letter-spacing: -0.2px; }
-  .works-bar-text strong { color: #c7d2fe; }
-
-  /* CALC RECOVER BOX */
-  .result-box.recover { background: #f0fdf4; border: 1.5px solid #bbf7d0; display: flex; flex-direction: column; }
-  .result-box.recover .result-label { color: #16a34a; }
-  .result-box.recover .result-value { color: #16a34a; }
-  .result-box.recover .btn { margin-top: 20px; align-self: flex-start; }
-
-  /* BUILT HEADLINE */
-  .built-headline { font-size: clamp(22px, 3vw, 32px) !important; font-weight: 800 !important; color: var(--black) !important; margin: 32px auto 48px !important; max-width: 560px !important; line-height: 1.4 !important; }
-
-  /* PRICING STRIKETHROUGH */
-  .price-was { font-size: 36px; font-weight: 400; color: #9ca3af; text-decoration: line-through; letter-spacing: -1px; margin-right: 4px; }
-
-  /* DONE-FOR-YOU CALLOUT */
-  .dfy-callout { display: flex; gap: 16px; align-items: flex-start; background: var(--blue-light); border: 1.5px solid #c7d2fe; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; }
-  .dfy-icon { width: 28px; height: 28px; background: var(--blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; flex-shrink: 0; margin-top: 2px; }
-  .dfy-title { font-size: 15px; font-weight: 800; color: var(--blue); margin-bottom: 6px; }
-  .dfy-sub { font-size: 14px; color: var(--gray); line-height: 1.6; }
-
-  /* HOW IT WORKS STEPS */
-  #how-it-works { padding: 110px 0; background: var(--light); text-align: center; }
-  .steps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 32px; text-align: left; margin-top: 0; }
-  .step-card { background: var(--white); border-radius: 16px; padding: 32px 28px; border: 1px solid var(--border); }
-  .step-num { width: 40px; height: 40px; background: var(--blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; margin-bottom: 16px; }
-  .step-title { font-size: 17px; font-weight: 800; color: var(--black); margin-bottom: 10px; line-height: 1.3; }
-  .step-body { font-size: 15px; color: var(--gray); line-height: 1.7; }
-
-  /* STICKY MOBILE CTA */
-  .sticky-mobile-cta { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.97); border-top: 1px solid var(--border); padding: 14px 20px; z-index: 998; box-shadow: 0 -4px 20px rgba(0,0,0,0.12); transform: translateY(100%); opacity: 0; transition: transform 0.4s ease, opacity 0.4s ease; }
-  .sticky-mobile-cta.visible { transform: translateY(0); opacity: 1; }
-
-
-  @media (max-width: 768px) {
-    .steps-grid { grid-template-columns: 1fr; gap: 20px; }
-    .sticky-mobile-cta { display: block; }
-  }
-
-  /* PROOF STATS */
-  .proof-stat { background: var(--blue-light); border: 1.5px solid #c7d2fe; border-radius: 20px; padding: 52px 40px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .proof-number { font-size: clamp(52px, 7vw, 80px); font-weight: 900; color: var(--blue); letter-spacing: -3px; line-height: 1; margin-bottom: 16px; }
-  .proof-label { font-size: 16px; color: var(--gray); line-height: 1.6; max-width: 240px; }
-
-  /* NAV / FOOTER LOGO */
-  .nav-logo-img { height: 38px; width: auto; display: block; }
-  .footer-logo-img { height: 30px; width: auto; display: block; }
-
-  /* HERO RING ANIMATION */
-  .btn-ring { animation: ring-glow 2s ease-in-out infinite; }
-  @keyframes ring-glow {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(79,70,229,0.55), 0 4px 16px rgba(79,70,229,0.3); }
-    50% { box-shadow: 0 0 0 14px rgba(79,70,229,0), 0 4px 16px rgba(79,70,229,0.3); }
-  }
-  /* LIVE DOT */
-  .live-dot { width: 9px; height: 9px; background: #22c55e; border-radius: 50%; display: inline-block; box-shadow: 0 0 0 3px rgba(34,197,94,0.3); animation: dot-pulse 2s ease-in-out infinite; flex-shrink: 0; }
-  @keyframes dot-pulse { 0%,100% { box-shadow: 0 0 0 3px rgba(34,197,94,0.3); } 50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); } }
-
-  /* INDIGO SECTION WORKS-WITH TWEAKS */
-  .works-item { background: rgba(255,255,255,0.1) !important; }
-  .works-item:hover { background: rgba(255,255,255,0.18) !important; }
-  .works-title { font-size: 15px !important; }
-
-  /* HERO CTA GLOW */
-  .hero-glow { display: inline-flex; align-items: center; justify-content: center; gap: 10px; animation: btn-glow 3s ease-in-out infinite; }
-  @keyframes btn-glow {
-    0%, 100% { box-shadow: 0 4px 20px rgba(79,70,229,0.3); }
-    50% { box-shadow: 0 4px 40px rgba(79,70,229,0.55), 0 0 0 8px rgba(79,70,229,0.1); }
-  }
-
-  /* REVENUE BANNER */
-  #revenue-banner { background: #0f172a; padding: 56px 0; text-align: center; }
-  .rev-banner-num { font-size: clamp(72px, 10vw, 120px); font-weight: 900; color: #ffffff; letter-spacing: -4px; line-height: 1; margin-bottom: 12px; }
-  .rev-banner-label { font-size: 18px; color: rgba(255,255,255,0.6); font-weight: 500; max-width: 480px; margin: 0 auto; line-height: 1.5; }
-
-  /* PLATFORM PILLS */
-  .platform-pills { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 40px; }
-  .platform-pill { display: inline-flex; align-items: center; gap: 8px; background: #f8fafc; border: 1px solid var(--border); border-radius: 50px; padding: 8px 18px; font-size: 14px; font-weight: 600; color: var(--black); }
-  .platform-pill .pill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-
-  /* FAQ */
-  #faq { padding: 100px 0; background: var(--white); }
-  #faq h2 { text-align: center; margin-bottom: 56px; }
-
-</style>
+  </script>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <div class="container">
-    <a href="/" style="display:inline-block;line-height:0;"><img src="logo-color.png" alt="TourOps" class="nav-logo-img"></a>
-    <div style="display:flex;gap:12px;align-items:center;">
-      <a href="tel:+18165494684" class="btn btn-primary" style="padding:10px 22px;font-size:14px;border-radius:8px;">Live Demo</a>
-    </div>
+  <!-- ========== OFFER BAR ========== -->
+  <div class="offer-bar">
+    <span>✨ <strong>$25 OFF</strong> your first deep clean — Limited time for San Antonio homeowners.</span>
+    <a href="#quote">Get Quote →</a>
   </div>
-</nav>
 
-<!-- HERO -->
-<section id="hero">
-  <div class="container">
-    <div class="label">For Tour and Activity Operators</div>
-    <h1>Never Miss Another<br>Booking Inquiry.</h1>
-    <p class="subhead">Built after losing $47,000 to missed calls.</p>
-    <p class="body">Stop missing bookings. Take back your time. TourOps handles every inquiry across every channel — so you can run your business without the chaos.</p>
-    <div class="hero-demo-btn">
-      <a href="tel:+18165494684" class="btn btn-primary btn-lg btn-full hero-glow" style="flex-direction:column;gap:4px;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 012 2.21 2 2 0 013.86 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"></path></svg>
-          <span>Try It Live Now</span>
-          <span class="live-dot" style="margin-left:2px;"></span>
-        </div>
-        <span style="font-size:12px;font-weight:400;opacity:0.8;">Talk to the actual system operators use.</span>
+  <!-- ========== HEADER ========== -->
+  <header class="header" id="header">
+    <div class="container">
+      <a href="#" class="header-logo">
+        <svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true">
+          <polygon points="32,4 38,24 58,24 42,36 48,56 32,44 16,56 22,36 6,24 26,24" fill="#D4AF37"/>
+          <polygon points="32,14 35.5,25 46,25 37.5,32 41,43 32,36 23,43 26.5,32 18,25 28.5,25" fill="#0A1F44"/>
+        </svg>
+        Lone Star <span class="logo-star">Shine</span>
       </a>
-    </div>
-  </div>
-</section>
 
-<!-- PROBLEM: TODD'S STORY -->
-<section class="section-alt">
-  <div class="container">
-    <div class="split">
-      <div style="flex-shrink:0;">
-        <img src="founder-headshot.png" alt="Todd Abrams, Founder of TourOps" style="width:100%;max-width:420px;border-radius:20px;display:block;">
-      </div>
-      <div class="split-text">
-        <div class="label">Why I Built Tour Ops</div>
-        <h2>I lost $47,000 in one year to unanswered inquiries.</h2>
-        <p>I’m a tour operator. Calls came in while I was guiding. Texts while I was driving between locations. DMs on weekends. Voicemails after hours. During peak season, it was chaos on every channel.</p>
-        <p>Every missed inquiry was a booking I didn’t even know I lost.</p>
-        <div class="split-lines">
-          <p>Every missed call.</p>
-          <p>Every delayed reply.</p>
-          <p>Every conversation buried in a DM thread.</p>
-        </div>
-        <p class="big-callout">That’s not “busy.” That’s revenue walking away.</p>
-      </div>
-    </div>
-  </div>
-</section>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#services">Services</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#service-area">Service Area</a>
+        <a href="#faq">FAQ</a>
+        <a href="#quote" class="btn btn-primary btn-sm nav-cta desktop-only">Get Quote</a>
+      </nav>
 
-<!-- CALCULATOR -->
-<section id="calculator">
-  <div class="container--narrow">
-    <div class="header">
-      <div class="label">The Math</div>
-      <h2>What are missed bookings actually costing you?</h2>
-      <p>Use your own numbers. See your real loss.</p>
+      <button class="mobile-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </div>
-    <div class="calc-card">
-      <div class="calc-inputs">
-        <div class="calc-field">
-          <label>Missed inquiries/day <span class="val" id="v-inquiries">1</span></label>
-          <input type="range" id="inquiries" min="1" max="20" value="1">
-          <div class="hint">Calls, texts, DMs you don't respond to in time</div>
+
+    <div class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
+      <a href="#">Home</a>
+      <a href="#services">Services</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#service-area">Service Area</a>
+      <a href="#faq">FAQ</a>
+      <a href="#quote" class="btn btn-primary">Get Quote</a>
+    </div>
+  </header>
+
+  <!-- ========== HERO ========== -->
+  <section class="hero" id="home">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">Book Today, Clean Tomorrow</div>
+        <h1>Mess with Texas…<br>we'll <span class="gold">clean it up.</span></h1>
+        <p class="hero-sub">Premium home cleaning trusted by San Antonio homeowners. Licensed, insured, and committed to making your home sparkle.</p>
+
+        <div class="hero-trust">
+          <span class="trust-badge"><span class="icon">✓</span> Licensed</span>
+          <span class="trust-badge"><span class="icon">✓</span> Insured</span>
+          <span class="trust-badge"><span class="icon">✓</span> Background Checked</span>
+          <span class="trust-badge"><span class="icon">✓</span> Satisfaction Guaranteed</span>
         </div>
-        <div class="calc-field">
-          <label>Avg booking value <span class="val" id="v-value">$600</span></label>
-          <input type="range" id="value" min="50" max="5000" value="600" step="50">
-          <div class="hint">Your typical tour or experience price</div>
+
+        <div class="hero-ctas">
+          <a href="#quote" class="btn btn-primary btn-lg">Get Your Quote</a>
+          <a href="tel:2105550199" class="btn btn-secondary btn-lg">Call Now</a>
         </div>
-        <div class="calc-field">
-          <label>Close rate <span class="val" id="v-close">25%</span></label>
-          <input type="range" id="close" min="5" max="80" value="25" step="5">
-          <div class="hint">% of inquiries that become bookings</div>
-        </div>
-      </div>
-      <div class="calc-divider"></div>
-      <div class="calc-result" style="grid-template-columns:1fr;">
-        <div class="result-box loss" style="text-align:center;">
-          <div class="result-label">Annual Revenue Lost to Missed Inquiries</div>
-          <div class="result-value" id="annual-loss" style="font-size:clamp(44px,6vw,68px);letter-spacing:-2px;margin:8px 0;">$54,750</div>
-          <div class="result-sub" style="margin-bottom:20px;">Based on your numbers — not ours. This is what slipping through the cracks costs you every year.</div>
-          <a href="https://links.opsaiworks.com/widget/survey/OZvGptRkUqTzYG24ANM2" target="_blank" rel="noopener" class="btn btn-primary">Get This Back →</a>
+
+        <div class="hero-rating">
+          <span class="stars">★★★★★</span>
+          <span>500+ Happy San Antonio Customers</span>
         </div>
       </div>
 
-    </div>
-  </div>
-</section>
-
-
-<!-- HIRING TRAP -->
-<section style="padding:80px 0;background:#0f172a;">
-  <div class="container">
-    <div class="label" style="color:rgba(255,255,255,0.5);text-align:center;">The Hiring Trap</div>
-    <h2 style="color:#fff;text-align:center;margin-bottom:48px;">I tried hiring. It just made the problem more expensive.</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;max-width:800px;margin:0 auto 48px;">
-      <div style="background:#fff;border-radius:16px;padding:32px 28px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-        <div style="font-size:13px;font-weight:700;letter-spacing:1px;color:#ef4444;margin-bottom:24px;">HIRING</div>
-        <div style="font-size:16px;color:#475569;line-height:2.4;">
-          <p style="margin:0;"><span style="color:#ef4444;font-weight:700;margin-right:10px;">✗</span>Training and onboarding</p>
-          <p style="margin:0;"><span style="color:#ef4444;font-weight:700;margin-right:10px;">✗</span>Turnover when they quit</p>
-          <p style="margin:0;"><span style="color:#ef4444;font-weight:700;margin-right:10px;">✗</span>Still misses texts and DMs</p>
-          <p style="margin:0;"><span style="color:#ef4444;font-weight:700;margin-right:10px;">✗</span>Can't cover nights or weekends</p>
-          <p style="margin:0;"><span style="color:#ef4444;font-weight:700;margin-right:10px;">✗</span>Inconsistent follow-up</p>
-        </div>
-      </div>
-      <div style="background:#f0fdf4;border:2px solid #22c55e;border-radius:16px;padding:32px 28px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-        <div style="font-size:13px;font-weight:700;letter-spacing:1px;color:#22c55e;margin-bottom:24px;">TOUROPS</div>
-        <div style="font-size:16px;color:#1e293b;line-height:2.4;">
-          <p style="margin:0;"><span style="color:#22c55e;font-weight:700;margin-right:10px;">✓</span>Set up once, runs forever</p>
-          <p style="margin:0;"><span style="color:#22c55e;font-weight:700;margin-right:10px;">✓</span>Never calls in sick</p>
-          <p style="margin:0;"><span style="color:#22c55e;font-weight:700;margin-right:10px;">✓</span>Every channel, instantly</p>
-          <p style="margin:0;"><span style="color:#22c55e;font-weight:700;margin-right:10px;">✓</span>24/7 — nights, weekends, holidays</p>
-          <p style="margin:0;"><span style="color:#22c55e;font-weight:700;margin-right:10px;">✓</span>Follows up until they book</p>
-        </div>
+      <div class="hero-image">
+        <img src="https://picsum.photos/seed/cleanhome/800/480" alt="Beautifully cleaned modern living room in San Antonio home" width="800" height="480" loading="eager">
       </div>
     </div>
-    <p style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-0.3px;text-align:center;max-width:680px;margin:0 auto;line-height:1.6;">More people didn't fix it. No product I found could handle every channel, follow up automatically, and work with my existing tools. So I built one.</p>
-  </div>
-</section>
+  </section>
 
-<!-- BUILT INSTEAD -->
-<section id="built">
-  <div class="container">
-    <div class="label">What I Built Instead</div>
-    <h2>Stop missing bookings. Control the chaos. Get your time back.</h2>
-    <div class="stacked-lines">
-      <p data-text="No more missed bookings."></p>
-      <p data-text="No more after-hours stress."></p>
-      <p data-text="No more channel chaos."></p>
-      <p data-text="Total control — on your terms."></p>
-    </div>
-    <p class="built-headline">Without adding staff.<br>Without replacing anything you already use.</p>
-  </div>
-</section>
+  <!-- ========== QUICK ESTIMATOR ========== -->
+  <section class="estimator" id="estimator">
+    <div class="container">
+      <div class="estimator-card">
+        <span class="section-label">Quick Estimate</span>
+        <h2 class="section-title">Price Estimator</h2>
+        <p class="estimator-subtitle">Get an instant ballpark price for your home cleaning.</p>
 
-<!-- DEMO -->
-<section id="demo">
-  <div class="container">
-    <div class="demo-banner">
-      <div class="demo-left">
-        <h2>Hear It For Yourself.</h2>
-        <p>Talk to TourOps right now. Ask about tours, pricing, availability — anything a guest would ask. This is the actual AI, not a recording.</p>
-        <div class="demo-features">
-          <div class="demo-feature">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Voice AI answers in real time
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>Bedrooms</span>
+            <span class="slider-value" id="bed-value">3</span>
           </div>
-          <div class="demo-feature">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            No phone call needed — works in your browser
+          <input type="range" id="bedrooms" min="1" max="6" value="3" aria-label="Number of bedrooms">
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>Bathrooms</span>
+            <span class="slider-value" id="bath-value">2</span>
           </div>
-          <div class="demo-feature">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Same system your guests will talk to
+          <input type="range" id="bathrooms" min="1" max="5" value="2" aria-label="Number of bathrooms">
+        </div>
+
+        <div>
+          <div class="slider-label"><span>Cleaning Type</span></div>
+          <div class="type-buttons">
+            <button class="type-btn active" data-type="standard" data-mult="1.0">Standard</button>
+            <button class="type-btn" data-type="deep" data-mult="1.35">Deep Clean</button>
+            <button class="type-btn" data-type="moveout" data-mult="1.6">Move-Out</button>
           </div>
         </div>
+
+        <div class="freq-group">
+          <label for="frequency">Frequency</label>
+          <select id="frequency">
+            <option value="1.0">One-Time</option>
+            <option value="0.85">Weekly (−15%)</option>
+            <option value="0.90">Bi-Weekly (−10%)</option>
+            <option value="0.95">Monthly (−5%)</option>
+          </select>
+        </div>
+
+        <div class="estimate-result">
+          <div class="estimate-price" id="estimate-price">$180 – $220</div>
+          <div class="estimate-note">Estimated price range</div>
+        </div>
+
+        <a href="#quote" class="btn btn-primary btn-lg" style="width:100%;text-align:center;">Get My Exact Quote</a>
+        <p class="estimate-disclaimer">Estimate only. Final price depends on home condition and add-ons.</p>
       </div>
-      <div class="demo-right">
-        <div class="demo-phone">
-          <div class="demo-phone-top">
-            <div class="demo-phone-avatar">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>
+    </div>
+  </section>
+
+  <!-- ========== SOCIAL PROOF ========== -->
+  <section class="social-proof">
+    <div class="container">
+      <div class="proof-grid">
+        <div class="proof-card">
+          <div class="proof-number">500<span class="gold">+</span></div>
+          <div class="proof-label">Happy Customers</div>
+        </div>
+        <div class="proof-card">
+          <div class="proof-number">4.9<span class="gold">★</span></div>
+          <div class="proof-label">Google Rating</div>
+        </div>
+        <div class="proof-card">
+          <div class="proof-number">5<span class="gold">+</span></div>
+          <div class="proof-label">Years in San Antonio</div>
+        </div>
+        <div class="proof-card">
+          <div class="proof-number">100<span class="gold">%</span></div>
+          <div class="proof-label">Satisfaction Guaranteed</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SERVICES ========== -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="text-center">
+        <span class="section-label">Our Services</span>
+        <h2 class="section-title">Cleaning Solutions for Every Home</h2>
+        <p class="section-subtitle">From routine tidying to deep sanitization, we've got San Antonio covered.</p>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-card-img">
+            <img src="https://picsum.photos/seed/standard/600/400" alt="Standard home cleaning service" width="600" height="400" loading="lazy">
+          </div>
+          <div class="service-card-body">
+            <h3>Standard Cleaning</h3>
+            <p>Regular maintenance cleaning to keep your home fresh and tidy. Includes dusting, vacuuming, mopping, and surface sanitization.</p>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-card-img">
+            <img src="https://picsum.photos/seed/deepclean/600/400" alt="Deep cleaning service" width="600" height="400" loading="lazy">
+          </div>
+          <div class="service-card-body">
+            <h3>Deep Cleaning</h3>
+            <p>A thorough top-to-bottom scrub. We tackle baseboards, inside appliances, behind furniture, and every hidden corner.</p>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-card-img">
+            <img src="https://picsum.photos/seed/movein/600/400" alt="Move-in move-out cleaning" width="600" height="400" loading="lazy">
+          </div>
+          <div class="service-card-body">
+            <h3>Move-In / Move-Out</h3>
+            <p>Start fresh or leave spotless. Comprehensive cleaning designed for real estate turnover and new beginnings.</p>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-card-img">
+            <img src="https://picsum.photos/seed/recurring/600/400" alt="Recurring cleaning service" width="600" height="400" loading="lazy">
+          </div>
+          <div class="service-card-body">
+            <h3>Recurring Cleaning</h3>
+            <p>Weekly, bi-weekly, or monthly plans that keep your home consistently clean with savings up to 15%.</p>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-card-img">
+            <img src="https://picsum.photos/seed/addon/600/400" alt="Add-on cleaning services" width="600" height="400" loading="lazy">
+          </div>
+          <div class="service-card-body">
+            <h3>Add-On Services</h3>
+            <p>Inside fridge, inside oven, window cleaning, laundry, organizing — customize your clean to fit your needs.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== HOW IT WORKS ========== -->
+  <section class="how-it-works">
+    <div class="container">
+      <div class="text-center">
+        <span class="section-label">How It Works</span>
+        <h2 class="section-title">Three Simple Steps</h2>
+        <p class="section-subtitle">Getting a sparkling home has never been easier.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Request a Quote</h3>
+          <p>Tell us about your home and cleaning needs. We'll send a personalized quote within hours.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Schedule Your Clean</h3>
+          <p>Pick a date and time that works for you. We'll confirm your booking right away.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Enjoy Your Home</h3>
+          <p>Relax while our professionals make your home sparkle. Satisfaction guaranteed every time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== BEFORE / AFTER ========== -->
+  <section class="before-after">
+    <div class="container">
+      <div class="text-center">
+        <span class="section-label">Results</span>
+        <h2 class="section-title">See the Difference</h2>
+        <p class="section-subtitle">Real transformations from real San Antonio homes.</p>
+      </div>
+
+      <div class="ba-grid">
+        <div class="ba-card">
+          <div class="ba-images">
+            <div>
+              <img src="https://picsum.photos/seed/before1/400/300" alt="Kitchen before cleaning" width="400" height="300" loading="lazy">
+              <span class="ba-label">Before</span>
             </div>
             <div>
-              <div class="demo-phone-name">TourOps AI</div>
-              <div class="demo-phone-status"><span class="dot"></span> Online now</div>
+              <img src="https://picsum.photos/seed/after1/400/300" alt="Kitchen after cleaning" width="400" height="300" loading="lazy">
+              <span class="ba-label after-label">After</span>
             </div>
           </div>
-          <div class="demo-phone-body">
-            <div class="demo-voice-ring">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          <div class="ba-caption">Kitchen Deep Clean — Stone Oak</div>
+        </div>
+
+        <div class="ba-card">
+          <div class="ba-images">
+            <div>
+              <img src="https://picsum.photos/seed/before2/400/300" alt="Bathroom before cleaning" width="400" height="300" loading="lazy">
+              <span class="ba-label">Before</span>
             </div>
-            <div class="demo-phone-prompt">Ask about any tour or booking</div>
-            <div class="demo-phone-hint">Powered by Voice AI</div>
-            <button id="demo-voice-btn" class="demo-talk-btn" onclick="if(window.leadConnector&&window.leadConnector.chatWidget){window.leadConnector.chatWidget.openWidget()}else{window.location.href='tel:+18165494684'}">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>
-              Start Talking
-            </button>
+            <div>
+              <img src="https://picsum.photos/seed/after2/400/300" alt="Bathroom after cleaning" width="400" height="300" loading="lazy">
+              <span class="ba-label after-label">After</span>
+            </div>
           </div>
-          <div class="demo-phone-footer">
-            <span>No recording · Secure browser connection</span>
-          </div>
+          <div class="ba-caption">Bathroom Refresh — Alamo Heights</div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- FEATURE 1: AI COMMUNICATION -->
-<section>
-  <div class="container">
-    <div class="split">
-      <div class="split-text">
-        <div class="label">24/7 AI Communication</div>
-        <h2>Answers calls, texts, and chats — even at 2 AM on a Saturday.</h2>
-        <p>Voice AI answers inbound calls. Conversation AI responds instantly to texts and web chat. Missed-call text back engages callers you couldn't pick up.</p>
-        <p>Built with your tours, pricing, and policies — so it answers like you would, not like a bot.</p>
+  <!-- ========== PRICING ========== -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="text-center">
+        <span class="section-label">Pricing</span>
+        <h2 class="section-title">Transparent, Honest Pricing</h2>
+        <p class="section-subtitle">No hidden fees. No surprises. Just a clean home.</p>
       </div>
-      <div class="mockup-frame">
-        <div class="chrome"><div class="chrome-dot r"></div><div class="chrome-dot y"></div><div class="chrome-dot g"></div><div class="chrome-url">app.tourops.com/conversations</div></div>
-        <div class="ghl">
-          <div class="ghl-sidebar">
-            <div class="ghl-nav">🏠</div><div class="ghl-nav active">💬</div><div class="ghl-nav">📅</div><div class="ghl-nav">👤</div><div class="ghl-nav">⚡</div>
-          </div>
-          <div class="ghl-content">
-            <div class="conv-list">
-              <div class="conv-list-hdr"><span>Conversations</span><div class="ai-badge">AI Active</div></div>
-              <div class="conv-search">🔍 Search...</div>
-              <div class="conv-item active"><div class="conv-item-name">Sarah M. <span>2m</span></div><div class="conv-item-preview ai">🤖 Booking link sent</div></div>
-              <div class="conv-item"><div class="conv-item-name">James R. <span>14m</span></div><div class="conv-item-preview">Spots for 6 people?</div></div>
-              <div class="conv-item"><div class="conv-item-name">Lisa K. <span>1h</span></div><div class="conv-item-preview ai">🤖 Missed call — texted</div></div>
-              <div class="conv-item"><div class="conv-item-name">Mike T. <span>2h</span></div><div class="conv-item-preview">What's included?</div></div>
-              <div class="conv-item"><div class="conv-item-name">Amy R. <span>3h</span></div><div class="conv-item-preview ai">🤖 Follow-up sent</div></div>
-            </div>
-            <div class="conv-thread">
-              <div class="conv-thread-hdr">
-                <div><div class="conv-thread-name">Sarah M. — City Highlights Tour</div><div class="conv-thread-meta">SMS · Received 6:47 PM</div></div>
-                <div class="ai-badge">🤖 AI Handled</div>
-              </div>
-              <div class="conv-msgs">
-                <div class="msg in"><div class="msg-bubble">Hi! Do you have availability this Saturday for 2 people? What's the price?</div><div class="msg-meta">Sarah M. · 6:47 PM</div></div>
-                <div class="msg out"><div class="msg-sender">🤖 TOUROPS AI · INSTANT</div><div class="msg-bubble">Hi Sarah! Yes — Saturday is available. City Highlights Tour is $125/person, so $250 for 2. Includes all entry fees and your guide. Want me to send the booking link?</div><div class="msg-meta">6:47 PM · Delivered ✓✓</div></div>
-                <div class="msg in"><div class="msg-bubble">Yes please! That sounds perfect.</div><div class="msg-meta">Sarah M. · 6:49 PM</div></div>
-                <div class="msg out"><div class="msg-sender">🤖 TOUROPS AI · INSTANT</div><div class="msg-bubble">Here's your link — takes 2 min and you can pay securely online: [booking link] Can't wait to show you the city! 🗺️</div><div class="msg-meta">6:49 PM · Delivered ✓✓</div></div>
-              </div>
-            </div>
-          </div>
+
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-icon">🏠</div>
+          <h3>Standard Cleaning</h3>
+          <div class="price">$129</div>
+          <div class="price-note">Starting at</div>
+          <ul class="pricing-features">
+            <li>All rooms dusted &amp; vacuumed</li>
+            <li>Bathrooms scrubbed &amp; sanitized</li>
+            <li>Kitchen surfaces cleaned</li>
+            <li>Floors mopped throughout</li>
+            <li>Trash emptied</li>
+          </ul>
+          <a href="#quote" class="btn btn-secondary" style="width:100%;">Get Exact Quote</a>
+        </div>
+
+        <div class="pricing-card featured">
+          <div class="pricing-icon">✨</div>
+          <h3>Deep Cleaning</h3>
+          <div class="price">$219</div>
+          <div class="price-note">Starting at</div>
+          <ul class="pricing-features">
+            <li>Everything in Standard</li>
+            <li>Inside cabinets &amp; appliances</li>
+            <li>Baseboards &amp; window sills</li>
+            <li>Light fixtures &amp; ceiling fans</li>
+            <li>Behind &amp; under furniture</li>
+          </ul>
+          <a href="#quote" class="btn btn-primary" style="width:100%;">Get Exact Quote</a>
+        </div>
+
+        <div class="pricing-card">
+          <div class="pricing-icon">📦</div>
+          <h3>Move-Out Cleaning</h3>
+          <div class="price">$299</div>
+          <div class="price-note">Starting at</div>
+          <ul class="pricing-features">
+            <li>Everything in Deep Clean</li>
+            <li>Inside all closets &amp; cabinets</li>
+            <li>Garage sweep (if applicable)</li>
+            <li>Wall spot cleaning</li>
+            <li>Deposit-back guarantee</li>
+          </ul>
+          <a href="#quote" class="btn btn-secondary" style="width:100%;">Get Exact Quote</a>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- FEATURE 2: UNIFIED INBOX -->
-<section class="section-alt">
-  <div class="container">
-    <div class="split reverse">
-      <div class="mockup-frame">
-        <div class="chrome"><div class="chrome-dot r"></div><div class="chrome-dot y"></div><div class="chrome-dot g"></div><div class="chrome-url">app.tourops.com/conversations/inbox</div></div>
-        <div class="ghl">
-          <div class="ghl-sidebar">
-            <div class="ghl-nav">🏠</div><div class="ghl-nav active">💬</div><div class="ghl-nav">📅</div><div class="ghl-nav">👤</div><div class="ghl-nav">⚡</div>
-          </div>
-          <div class="ghl-content">
-            <div class="inbox-panel">
-              <div class="inbox-sec-label">Inboxes</div>
-              <div class="inbox-i active">All Inquiries <span class="inbox-cnt">12</span></div>
-              <div class="inbox-i">Unread <span class="inbox-cnt">5</span></div>
-              <div class="inbox-i">AI Handled <span class="inbox-cnt g">7</span></div>
-              <div class="inbox-i">Needs You <span class="inbox-cnt">2</span></div>
-              <div class="inbox-sec-label">Channels</div>
-              <div class="inbox-i">📞 Calls</div>
-              <div class="inbox-i">💬 SMS</div>
-              <div class="inbox-i">📸 Instagram</div>
-              <div class="inbox-i">💙 Facebook</div>
-              <div class="inbox-i">🌐 Web Chat</div>
-            </div>
-            <div class="thread-list">
-              <div class="thread-i"><div class="t-avatar">SM</div><div class="t-body"><div class="t-top"><span class="t-name">Sarah M.</span><span class="t-time">2m</span></div><div class="t-prev u"><span class="ch sms">SMS</span>Booking confirmed ✓</div></div><div class="udot"></div></div>
-              <div class="thread-i"><div class="t-avatar">JR</div><div class="t-body"><div class="t-top"><span class="t-name">James R.</span><span class="t-time">14m</span></div><div class="t-prev u"><span class="ch dm">IG DM</span>Spots for 6 people?</div></div><div class="udot"></div></div>
-              <div class="thread-i"><div class="t-avatar">LK</div><div class="t-body"><div class="t-top"><span class="t-name">Lisa K.</span><span class="t-time">1h</span></div><div class="t-prev"><span class="ch call">Call</span>Missed · AI texted back</div></div></div>
-              <div class="thread-i"><div class="t-avatar">CP</div><div class="t-body"><div class="t-top"><span class="t-name">Acme Co. — Corporate</span><span class="t-time">3h</span></div><div class="t-prev u"><span class="ch sms">SMS</span>Private tour 20 pax</div></div><div class="udot"></div></div>
-              <div class="thread-i"><div class="t-avatar">MT</div><div class="t-body"><div class="t-top"><span class="t-name">Mike T.</span><span class="t-time">2h</span></div><div class="t-prev"><span class="ch web">Web</span>What's included?</div></div></div>
-              <div class="thread-i"><div class="t-avatar">AR</div><div class="t-body"><div class="t-top"><span class="t-name">Amy R.</span><span class="t-time">5h</span></div><div class="t-prev"><span class="ch dm">FB</span>Family friendly?</div></div></div>
-            </div>
-          </div>
+  <!-- ========== TRUST ========== -->
+  <section class="trust">
+    <div class="container">
+      <div class="text-center">
+        <span class="section-label">Why Choose Us</span>
+        <h2 class="section-title">The Lone Star Shine Promise</h2>
+        <p class="section-subtitle">We hold ourselves to the highest standard so you don't have to worry.</p>
+      </div>
+
+      <div class="trust-grid">
+        <div class="trust-card">
+          <div class="trust-icon">🛡️</div>
+          <h3>Fully Insured</h3>
+          <p>Every cleaner carries liability insurance. Your home and belongings are fully protected.</p>
         </div>
-      </div>
-      <div class="split-text">
-        <div class="label">Unified Inquiry Inbox</div>
-        <h2>Every conversation in one place.</h2>
-        <p>All calls, texts, chats, and DMs in one place. One thread per guest. No jumping between five apps. You see exactly what the guest received before you step in.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FEATURE 3: FOLLOW-UP -->
-<section>
-  <div class="container">
-    <div class="split">
-      <div class="split-text">
-        <div class="label">Structured Follow-Up</div>
-        <h2>No more "I'll call them back later."</h2>
-        <p>Every inquiry gets an immediate response. If they don't book, TourOps continues the follow-up automatically — sending booking links and reminders until they convert or disengage.</p>
-      </div>
-      <div class="mockup-frame">
-        <div class="chrome"><div class="chrome-dot r"></div><div class="chrome-dot y"></div><div class="chrome-dot g"></div><div class="chrome-url">app.tourops.com/automation/follow-up</div></div>
-        <div class="ghl">
-          <div class="ghl-sidebar">
-            <div class="ghl-nav">🏠</div><div class="ghl-nav">💬</div><div class="ghl-nav">📅</div><div class="ghl-nav">👤</div><div class="ghl-nav active">⚡</div>
-          </div>
-          <div class="ghl-content">
-            <div class="wf-wrap">
-              <div class="wf-hdr"><div class="wf-title">Inquiry → Booking Follow-Up</div><div class="wf-status">● Active · 47 enrolled</div></div>
-              <div class="wf-step"><div class="wf-line"><div class="wf-node t">📥</div><div class="wf-conn"></div></div><div class="wf-card"><div class="wf-card-top"><div class="wf-card-title">Trigger: New Inquiry Received</div><div class="wf-badge b">AUTO</div></div><div class="wf-card-detail">Any channel — SMS, call, DM, web chat</div></div></div>
-              <div class="wf-step"><div class="wf-line"><div class="wf-node a">🤖</div><div class="wf-conn"></div></div><div class="wf-card"><div class="wf-card-top"><div class="wf-card-title">AI: Instant Response + Booking Link</div><div class="wf-badge b">AI</div></div><div class="wf-card-detail">Tour info, pricing, availability. Booking link sent.</div></div></div>
-              <div class="wf-step"><div class="wf-line"><div class="wf-node w">⏱</div><div class="wf-conn"></div></div><div class="wf-card"><div class="wf-card-top"><div class="wf-card-title">Wait 2 Hours — No booking yet?</div><div class="wf-badge y">WAIT</div></div><div class="wf-card-detail">If no booking confirmed, continue</div></div></div>
-              <div class="wf-step"><div class="wf-line"><div class="wf-node a">💬</div><div class="wf-conn"></div></div><div class="wf-card"><div class="wf-card-top"><div class="wf-card-title">Follow-Up #1: SMS Nudge</div><div class="wf-badge b">SMS</div></div><div class="wf-card-detail">"Hey [Name] — spots this weekend are filling up. Your link: [link]"</div></div></div>
-              <div class="wf-step"><div class="wf-line"><div class="wf-node w">⏱</div><div class="wf-conn"></div></div><div class="wf-card"><div class="wf-card-top"><div class="wf-card-title">Wait 24 Hours</div><div class="wf-badge y">WAIT</div></div><div class="wf-card-detail">Final follow-up or mark disengaged</div></div></div>
-              <div class="wf-step"><div class="wf-line"><div class="wf-node d">✓</div></div><div class="wf-card"><div class="wf-card-top"><div class="wf-card-title">Final Nudge or Disengage</div><div class="wf-badge g">FINAL</div></div><div class="wf-card-detail">Last message sent. Lead marked if no response.</div></div></div>
-            </div>
-          </div>
+        <div class="trust-card">
+          <div class="trust-icon">🔍</div>
+          <h3>Background Checked</h3>
+          <p>Every team member passes thorough background screening before entering your home.</p>
+        </div>
+        <div class="trust-card">
+          <div class="trust-icon">🤝</div>
+          <h3>Satisfaction Guaranteed</h3>
+          <p>Not happy? We'll re-clean at no extra charge within 24 hours. No questions asked.</p>
+        </div>
+        <div class="trust-card">
+          <div class="trust-icon">🌿</div>
+          <h3>Eco-Friendly Options</h3>
+          <p>We offer plant-based, non-toxic cleaning products that are safe for kids, pets, and the planet.</p>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- FEATURE 4: CALENDAR -->
-<section class="section-alt">
-  <div class="container">
-    <div class="split reverse">
-      <div class="mockup-frame">
-        <div class="chrome"><div class="chrome-dot r"></div><div class="chrome-dot y"></div><div class="chrome-dot g"></div><div class="chrome-url">app.tourops.com/calendar</div></div>
-        <div class="ghl">
-          <div class="ghl-sidebar">
-            <div class="ghl-nav">🏠</div><div class="ghl-nav">💬</div><div class="ghl-nav active">📅</div><div class="ghl-nav">👤</div><div class="ghl-nav">⚡</div>
-          </div>
-          <div class="ghl-content">
-            <div class="cal-wrap">
-              <div class="cal-hdr"><div class="cal-title">📅 Tuesday, March 4</div></div>
-              <div class="cal-body">
-                <div class="cal-row"><div class="cal-time">9 AM</div><div class="cal-slot empty"></div></div>
-                <div class="cal-row"><div class="cal-time">10 AM</div><div class="cal-slot booked"><div class="cal-slot-title">Corporate — Acme Co.</div><div class="cal-slot-sub">Private tour 20 pax · AI Scheduled</div><div class="cal-badge">AI Booked</div></div></div>
-                <div class="cal-row"><div class="cal-time">11 AM</div><div class="cal-slot empty"></div></div>
-                <div class="cal-row"><div class="cal-time">1 PM</div><div class="cal-slot booked"><div class="cal-slot-title">Williams Family — Private Tour</div><div class="cal-slot-sub">Custom itinerary · 8 guests · AI Scheduled</div><div class="cal-badge">AI Booked</div></div></div>
-                <div class="cal-row"><div class="cal-time">3 PM</div><div class="cal-slot confirmed"><div class="cal-slot-title g">City Highlights — 4 Guests</div><div class="cal-slot-sub">Confirmed · Sarah M. · $500</div><div class="cal-badge g">Confirmed</div></div></div>
-                <div class="cal-row"><div class="cal-time">5 PM</div><div class="cal-slot booked"><div class="cal-slot-title">Sunset Tour Inquiry — Mike T.</div><div class="cal-slot-sub">Booked by AI after hours</div><div class="cal-badge">AI Booked</div></div></div>
-              </div>
+  <!-- ========== REVIEWS ========== -->
+  <section class="reviews" id="reviews">
+    <div class="container">
+      <div class="text-center">
+        <span class="section-label">Testimonials</span>
+        <h2 class="section-title">What San Antonio Is Saying</h2>
+        <p class="section-subtitle">Real reviews from real homeowners in your neighborhood.</p>
+      </div>
+
+      <div class="reviews-grid">
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"They transformed our home before a big family gathering. Every surface was spotless. I couldn't believe the difference!"</p>
+          <div class="review-author">
+            <img src="https://picsum.photos/seed/maria/88/88" alt="Maria G." class="review-avatar" width="44" height="44" loading="lazy">
+            <div>
+              <div class="review-name">Maria G.</div>
+              <div class="review-location">Stone Oak</div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="split-text">
-        <div class="label">Calendar Handoff</div>
-        <h2>You show up to scheduled calls. Not voicemails.</h2>
-        <p>Private tours. Corporate groups. Complex requests. When a conversation needs you, TourOps books it directly into your calendar. No phone tag.</p>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- FEATURE 5: DAILY PROOF -->
-<section>
-  <div class="container">
-    <div class="split">
-      <div class="split-text">
-        <div class="label">Daily Proof. Weekly Clarity.</div>
-        <h2>You see exactly what ran while you were offline.</h2>
-        <p>Every evening: calls answered, messages handled, booking links sent, consultations scheduled.</p>
-        <p>Every Monday: total inquiries handled, conversations created, consultations booked, estimated revenue protected.</p>
-      </div>
-      <div class="mockup-frame">
-        <div class="chrome"><div class="chrome-dot r"></div><div class="chrome-dot y"></div><div class="chrome-dot g"></div><div class="chrome-url">app.tourops.com/reporting/daily</div></div>
-        <div class="ghl">
-          <div class="ghl-sidebar">
-            <div class="ghl-nav">🏠</div><div class="ghl-nav">💬</div><div class="ghl-nav">📅</div><div class="ghl-nav">👤</div><div class="ghl-nav active">📊</div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"We've used them bi-weekly for six months. Consistently thorough, always on time, and the team is so friendly and professional."</p>
+          <div class="review-author">
+            <img src="https://picsum.photos/seed/james/88/88" alt="James R." class="review-avatar" width="44" height="44" loading="lazy">
+            <div>
+              <div class="review-name">James R.</div>
+              <div class="review-location">Alamo Heights</div>
+            </div>
           </div>
-          <div class="ghl-content">
-            <div class="rpt-wrap">
-              <div class="rpt-title">📊 Daily Proof of Work</div>
-              <div class="rpt-date">Tuesday, March 4 · Generated 8:00 PM</div>
-              <div class="rpt-grid">
-                <div class="rpt-card"><div class="rpt-card-label">Calls Answered</div><div class="rpt-card-val b">8</div><div class="rpt-card-sub">While you were offline</div></div>
-                <div class="rpt-card"><div class="rpt-card-label">Messages Handled</div><div class="rpt-card-val b">14</div><div class="rpt-card-sub">SMS, DMs, web chat</div></div>
-                <div class="rpt-card"><div class="rpt-card-label">Booking Links Sent</div><div class="rpt-card-val g">6</div><div class="rpt-card-sub">Inquiries moved forward</div></div>
-                <div class="rpt-card"><div class="rpt-card-label">Consultations Booked</div><div class="rpt-card-val g">2</div><div class="rpt-card-sub">On your calendar tomorrow</div></div>
-              </div>
-              <div class="rpt-sec">
-                <div class="rpt-sec-title">💰 Revenue Protection</div>
-                <div class="rpt-row"><span class="rpt-row-l">Inquiries handled</span><span class="rpt-row-v">22</span></div>
-                <div class="rpt-row"><span class="rpt-row-l">Est. bookings from today</span><span class="rpt-row-v g">~5–6</span></div>
-                <div class="rpt-row"><span class="rpt-row-l">Est. revenue protected</span><span class="rpt-row-v g">~$3,000–$3,600</span></div>
-              </div>
-              <div class="rpt-sec">
-                <div class="rpt-sec-title">📝 Today's Snapshots</div>
-                <div class="snap"><div class="snap-time">6:47 PM · SMS</div><div class="snap-text">Sarah M. asked about Saturday. AI responded, sent booking link. Confirmed $250.</div></div>
-                <div class="snap"><div class="snap-time">11:30 AM · Instagram DM</div><div class="snap-text">Acme Co. — private tour 20 pax. AI identified high-value, booked consultation tomorrow 10 AM.</div></div>
-              </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"The move-out clean saved my security deposit. They got every detail — even the inside of the oven looked brand new."</p>
+          <div class="review-author">
+            <img src="https://picsum.photos/seed/sarah/88/88" alt="Sarah L." class="review-avatar" width="44" height="44" loading="lazy">
+            <div>
+              <div class="review-name">Sarah L.</div>
+              <div class="review-location">Helotes</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"As a busy dad of three, this service has been a lifesaver. Coming home to a clean house every week is priceless."</p>
+          <div class="review-author">
+            <img src="https://picsum.photos/seed/carlos/88/88" alt="Carlos M." class="review-avatar" width="44" height="44" loading="lazy">
+            <div>
+              <div class="review-name">Carlos M.</div>
+              <div class="review-location">Schertz</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"I love that they use eco-friendly products. My allergies have improved since switching to their green cleaning option."</p>
+          <div class="review-author">
+            <img src="https://picsum.photos/seed/rachel/88/88" alt="Rachel T." class="review-avatar" width="44" height="44" loading="lazy">
+            <div>
+              <div class="review-name">Rachel T.</div>
+              <div class="review-location">Boerne</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Best cleaning service in San Antonio, hands down. They even left a little thank-you note after the first clean. Such a nice touch!"</p>
+          <div class="review-author">
+            <img src="https://picsum.photos/seed/david/88/88" alt="David P." class="review-avatar" width="44" height="44" loading="lazy">
+            <div>
+              <div class="review-name">David P.</div>
+              <div class="review-location">Universal City</div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- QUOTE -->
-<section id="quote">
-  <div class="container">
-    <div class="quote-accent">"</div>
-    <blockquote>Other operators are drowning in missed calls and chaos.<br>You’re in <em>control.</em></blockquote>
-  </div>
-</section>
+  <!-- ========== SERVICE AREA ========== -->
+  <section class="service-area" id="service-area">
+    <div class="container">
+      <div class="text-center">
+        <span class="section-label">Service Area</span>
+        <h2 class="section-title">Proudly Serving San Antonio</h2>
+        <p class="section-subtitle">Professional cleaning across the greater San Antonio metro area.</p>
+      </div>
 
-<!-- HOW IT WORKS -->
-<section id="how-it-works">
-  <div class="container--narrow">
-    <div class="label">Simple to Start</div>
-    <h2 style="margin-bottom:16px;">Up and running in 3 steps.</h2>
-    <p style="margin-bottom:56px;max-width:480px;margin-left:auto;margin-right:auto;">No technical work on your end. I handle everything &mdash; you just show up for the kickoff call.</p>
-    <div class="steps-grid">
-      <div class="step-card">
-        <div class="step-num">1</div>
-        <div class="step-title">Apply &amp; Get Approved</div>
-        <div class="step-body">Fill out the 2-minute application. I personally review every submission and only onboard operators I know TourOps will work for.</div>
+      <div class="area-grid">
+        <div class="area-tag">San Antonio</div>
+        <div class="area-tag">Alamo Heights</div>
+        <div class="area-tag">Stone Oak</div>
+        <div class="area-tag">Helotes</div>
+        <div class="area-tag">Boerne</div>
+        <div class="area-tag">Schertz</div>
+        <div class="area-tag">Cibolo</div>
+        <div class="area-tag">Universal City</div>
+        <div class="area-tag">Converse</div>
+        <div class="area-tag">Live Oak</div>
+        <div class="area-tag">New Braunfels</div>
       </div>
-      <div class="step-card">
-        <div class="step-num">2</div>
-        <div class="step-title">Done-For-You Setup</div>
-        <div class="step-body">I configure your AI with your tours, pricing, policies, and booking links. Fully trained on your business &mdash; no technical setup on your end.</div>
+
+      <p class="area-text">
+        From Texas dust settling on your shelves to busy families juggling work and kids, San Antonio homeowners need a cleaning team they can trust. Lone Star Shine serves local homeowners across the metro — keeping homes fresh, healthy, and ready for anything.
+      </p>
+    </div>
+  </section>
+
+  <!-- ========== FAQ ========== -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="text-center">
+        <span class="section-label">FAQ</span>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-subtitle">Everything you need to know before booking.</p>
       </div>
-      <div class="step-card">
-        <div class="step-num">3</div>
-        <div class="step-title">Go Live &amp; Stop Missing Bookings</div>
-        <div class="step-body">Your system goes live. TourOps answers calls, follows up on texts, and moves every inquiry toward a booking &mdash; automatically.</div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Do you bring cleaning supplies?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Yes! We bring all supplies and professional-grade equipment. You don't need to provide anything. If you have preferred products you'd like us to use, just let us know.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Are your cleaners background checked?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Absolutely. Every team member undergoes a thorough background check before they join our team. Your safety and peace of mind are our top priority.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>What if I'm not satisfied?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">We stand behind our work with a 100% satisfaction guarantee. If you're not happy, contact us within 24 hours and we'll re-clean the areas of concern at no additional charge.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Do you clean while I'm home?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">It's completely up to you. Many clients give us a key or access code and go about their day. Others prefer to be home. We're comfortable either way.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Do you offer eco-friendly products?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Yes! We offer a green cleaning option using plant-based, non-toxic products. They're safe for kids, pets, and the environment — and they work just as well as traditional cleaners.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>What is your cancellation policy?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">We ask for at least 24 hours' notice for cancellations or reschedules. Cancellations with less than 24 hours' notice may be subject to a fee. We understand life happens — just communicate with us.</div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- PRICING -->
-<section id="pricing">
-  <div class="container--narrow">
-    <div class="header">
-      <div class="label" style="display:block;text-align:center;">Simple, Clear Pricing</div>
-      <h2>One plan. No hidden fees. No long contracts.</h2>
-      <p>Everything you need to stop missing bookings — nothing you don't.</p>
+  <!-- ========== QUOTE FORM ========== -->
+  <section class="quote-form-section" id="quote">
+    <div class="container">
+      <div class="quote-card">
+        <div class="text-center">
+          <span class="section-label">Get Started</span>
+          <h2 class="section-title">Request Your Free Quote</h2>
+          <p class="section-subtitle" style="margin-bottom:32px;">Fill out the form below and we'll get back to you within a few hours.</p>
+        </div>
+
+        <form id="quote-form" novalidate>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="q-name">Name *</label>
+              <input type="text" id="q-name" name="name" required placeholder="Your full name">
+              <span class="form-error">Please enter your name.</span>
+            </div>
+
+            <div class="form-group">
+              <label for="q-email">Email *</label>
+              <input type="email" id="q-email" name="email" required placeholder="you@email.com">
+              <span class="form-error">Please enter a valid email.</span>
+            </div>
+
+            <div class="form-group">
+              <label for="q-phone">Phone *</label>
+              <input type="tel" id="q-phone" name="phone" required placeholder="(210) 555-0199">
+              <span class="form-error">Please enter your phone number.</span>
+            </div>
+
+            <div class="form-group">
+              <label for="q-city">City</label>
+              <input type="text" id="q-city" name="city" placeholder="San Antonio">
+            </div>
+
+            <div class="form-group">
+              <label for="q-zip">Zip Code</label>
+              <input type="text" id="q-zip" name="zip" placeholder="78205" inputmode="numeric">
+            </div>
+
+            <div class="form-group">
+              <label for="q-bedrooms">Bedrooms</label>
+              <select id="q-bedrooms" name="bedrooms">
+                <option value="">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6+</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="q-bathrooms">Bathrooms</label>
+              <select id="q-bathrooms" name="bathrooms">
+                <option value="">Select</option>
+                <option value="1">1</option>
+                <option value="2" selected>2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5+</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="q-service">Service Type</label>
+              <select id="q-service" name="service">
+                <option value="standard">Standard Cleaning</option>
+                <option value="deep">Deep Cleaning</option>
+                <option value="moveout">Move-In / Move-Out</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="q-frequency">Cleaning Frequency</label>
+              <select id="q-frequency" name="frequency">
+                <option value="onetime">One-Time</option>
+                <option value="weekly">Weekly</option>
+                <option value="biweekly">Bi-Weekly</option>
+                <option value="monthly">Monthly</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="q-date">Preferred Date</label>
+              <input type="date" id="q-date" name="date">
+            </div>
+
+            <div class="form-group full">
+              <label for="q-notes">Notes</label>
+              <textarea id="q-notes" name="notes" placeholder="Anything we should know? Pets, access codes, special requests…"></textarea>
+            </div>
+
+            <div class="consent-group">
+              <input type="checkbox" id="q-sms" name="sms_consent">
+              <label for="q-sms">I consent to receive SMS text messages from Lone Star Shine. Message &amp; data rates may apply. Reply STOP to opt out.</label>
+            </div>
+
+            <div class="form-submit">
+              <button type="submit" class="btn btn-primary btn-lg" style="width:100%;">Submit Quote Request</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="form-success" id="form-success">
+          <div class="success-icon">✅</div>
+          <h3>Thank You!</h3>
+          <p>We've received your quote request. Our team will get back to you within a few hours. In the meantime, feel free to call us at <a href="tel:2105550199" style="color:var(--teal);font-weight:600;">(210) 555-0199</a>.</p>
+        </div>
+      </div>
     </div>
-    <div class="pricing-card" id="apply">
-      <div class="pricing-label">TourOps Core</div>
-      <div class="pricing-price"><s class="price-was">$397</s>$297 <span>/ month</span></div>
-      <p class="pricing-sub">Everything you need to stop missing bookings and start growing.</p>
-      <div class="pricing-divider"></div>
-      <div class="dfy-callout">
-        <div class="dfy-icon">&#10003;</div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3>Lone Star <span class="gold">Shine</span></h3>
+          <p>Premium residential cleaning trusted by San Antonio homeowners since 2020. Licensed, insured, and committed to making your home sparkle.</p>
+        </div>
+
         <div>
-          <div class="dfy-title">100% Done-For-You Setup</div>
-          <div class="dfy-sub">I personally configure your tours, pricing, policies, booking links, and AI training. You don’t touch the technical side — you just go live.</div>
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#reviews">Reviews</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#quote">Get Quote</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Services</h4>
+          <ul>
+            <li><a href="#services">Standard Cleaning</a></li>
+            <li><a href="#services">Deep Cleaning</a></li>
+            <li><a href="#services">Move-Out Cleaning</a></li>
+            <li><a href="#services">Recurring Plans</a></li>
+            <li><a href="#services">Add-Ons</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Contact</h4>
+          <ul class="footer-contact">
+            <li><span class="icon">📍</span> 123 Alamo Plaza, San Antonio, TX</li>
+            <li><span class="icon">📞</span> <a href="tel:2105550199">(210) 555-0199</a></li>
+            <li><span class="icon">✉️</span> <a href="mailto:hello@lonestarshine.com">hello@lonestarshine.com</a></li>
+            <li><span class="icon">🕐</span> Mon–Fri: 8am–6pm</li>
+            <li><span class="icon">🕐</span> Sat: 9am–4pm</li>
+          </ul>
         </div>
       </div>
-      <ul class="feature-list">
-        <li>24/7 AI voice coverage — answers every inbound call, after hours, weekends, and peak season</li>
-        <li>Instant missed-call text back — zero inquiries fall through the cracks</li>
-        <li>AI conversation coverage — texts, web chat, and DMs answered automatically</li>
-        <li>Structured follow-up until they book or say no — no lead left hanging</li>
-        <li>Calendar handoff for private tours, groups, and complex requests</li>
-        <li>Weekly visibility report — total clarity, zero guesswork</li>
-        <li>Connects to FareHarbor, Peek, Xola, and your CRM — nothing gets replaced</li>
-      </ul>
-      <div class="pricing-divider"></div>
-      <p class="usage">300 voice minutes · 500 SMS · Up to 2,500 contacts</p>
-      <div class="pricing-divider"></div>
-      <p class="onboarding-note"><strong>One-time onboarding: <s style="color:#9ca3af;font-weight:400;">$997</s> $497</strong> &mdash; Founding Operator rate</p>
-      <p class="billing-note">Billing starts only once your system is live and handling inquiries.</p>
-      <a href="https://links.opsaiworks.com/widget/survey/OZvGptRkUqTzYG24ANM2" target="_blank" rel="noopener" class="btn btn-primary btn-full btn-lg">Get Started →</a>
-      <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:20px;padding:14px 0;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-        <span style="font-size:14px;font-weight:600;color:#16a34a;">30-Day Money-Back Guarantee</span>
-      </div>
-      <p style="font-size:12px;color:var(--gray);text-align:center;margin:0;">Not a fit within 30 days of go-live? Full onboarding refund. No questions asked.</p>
-    </div>
-  </div>
-</section>
 
-<!-- APPLICATION FORM -->
-<section id="apply-form" style="padding:96px 0;background:var(--blue-light);">
-  <div class="container--narrow" style="text-align:center;">
-    <div class="label">Apply Now</div>
-    <h2 style="margin-bottom:16px;">Founding Operator Application</h2>
-    <p style="margin-bottom:40px;max-width:480px;margin-left:auto;margin-right:auto;">Takes 2 minutes. I’ll personally review every application and only accept operators I know TourOps will work for.</p>
-    <a href="https://links.opsaiworks.com/widget/survey/OZvGptRkUqTzYG24ANM2" target="_blank" rel="noopener" class="btn btn-primary btn-lg">Apply Now — Takes 2 Minutes</a>
-    <p style="font-size:13px;color:var(--gray);margin-top:16px;">Opens in a new page. No credit card required to apply.</p>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section id="faq">
-  <div class="container--narrow">
-    <div class="label" style="text-align:center;">Common Questions</div>
-    <h2 style="text-align:center;margin-bottom:48px;">Everything you need to know before applying</h2>
-    <div class="faq-item">
-      <div class="faq-q">Is it actually an AI, or a real person answering? <span class="faq-icon">+</span></div>
-      <div class="faq-a"><p>It’s AI — built specifically for your tours, pricing, and FAQs. It answers calls, texts, chats, and DMs instantly, 24/7. If someone needs to be transferred to you live, it does that too. You hear everything. You’re always in control.</p></div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q">How fast can this be set up? <span class="faq-icon">+</span></div>
-      <div class="faq-a"><p>Most operators are live within 48–72 hours. We handle the entire setup. You review it, approve it, and we go live. No tech skills required on your end.</p></div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q">Can I customize what it says? <span class="faq-icon">+</span></div>
-      <div class="faq-a"><p>Yes. We train it on your tours, your pricing, your policies, and your brand voice. If something doesn’t sound right, we fix it. It’s built to sound like you — not like a generic bot.</p></div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q">What if a customer wants to talk to a real person? <span class="faq-icon">+</span></div>
-      <div class="faq-a"><p>The AI can transfer calls live to you or anyone on your team. You set the rules — when to transfer, who to route to, and what happens after hours. Nothing slips through without a plan.</p></div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q">Will this work with my existing booking system? <span class="faq-icon">+</span></div>
-      <div class="faq-a"><p>Yes. TourOps works alongside FareHarbor, Peek Pro, Xola, Rezdy, Bookeo, and most other booking platforms. We don’t replace your tools — we plug in around them so nothing changes for your customers.</p></div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q">What about follow-up after the first contact? <span class="faq-icon">+</span></div>
-      <div class="faq-a"><p>Automated follow-up is built in. If someone doesn’t book after the first inquiry, TourOps follows up at the right intervals — by text or email — until they book or opt out. No leads fall through the cracks.</p></div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q">What if I’m not happy after go-live? <span class="faq-icon">+</span></div>
-      <div class="faq-a"><p>If within 30 days of go-live it’s not a fit, I refund your onboarding fee. No questions asked.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- FOUNDER -->
-<section class="section-alt" id="founder">
-  <div class="container">
-    <div class="split">
-      <div>
-        <div class="founder-photo" style="background-size:cover;background-position:center top;background:url(nz-landscape.jpg) center/cover no-repeat;"></div>
-        <p style="font-size:14px;color:var(--gray);font-style:italic;margin-top:16px;">Me in New Zealand. TourOps handled 312 inquiries while I was gone.</p>
-      </div>
-      <div class="split-text">
-        <div class="label">The Result</div>
-        <h2>Stop missing bookings. Get back your time.</h2>
-        <p>I built TourOps because I was tired of the chaos — missed calls, unanswered texts, leads going cold while I was actually doing the work I love.</p>
-        <p>Now I run tours without worrying about what’s slipping through the cracks. Every inquiry handled. Every follow-up sent. Zero stress.</p>
-        <p><strong>If you’re accepted, I’ll set everything up personally. No fluff. No hand-offs. I handle setup personally — start to finish.</strong></p>
-        <p class="founder-close" style="font-style:italic;color:#6b7280;">— Todd, Founder, TourOps</p>
-        <a href="https://links.opsaiworks.com/widget/survey/OZvGptRkUqTzYG24ANM2" target="_blank" rel="noopener" class="btn btn-primary btn-lg" style="margin-top:16px;">Let’s Fix This Together →</a>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Lone Star Shine. All rights reserved.</span>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook">f</a>
+          <a href="#" aria-label="Instagram">ig</a>
+          <a href="#" aria-label="Google">G</a>
+          <a href="#" aria-label="Nextdoor">N</a>
+        </div>
       </div>
     </div>
+  </footer>
+
+  <!-- ========== MOBILE CTA BAR ========== -->
+  <div class="mobile-cta-bar">
+    <a href="tel:2105550199" class="btn btn-secondary">📞 Call Now</a>
+    <a href="#quote" class="btn btn-primary">Get Quote</a>
   </div>
-</section>
 
-<!-- FOOTER -->
-<footer>
-  <div class="container">
-    <img src="logo-white.png" alt="TourOps" class="footer-logo-img">
-    <div class="footer-links">
-      <a href="/privacy">Privacy Policy</a>
-      <a href="/terms">Terms</a>
-    </div>
-    <p class="footer-copy">© 2025 TourOps AI</p>
-  </div>
-</footer>
-
-<script>
-  document.querySelectorAll('.faq-q').forEach(q => {
-    q.addEventListener('click', () => {
-      const item = q.parentElement, wasOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-      if (!wasOpen) item.classList.add('open');
-    });
-  });
-
-  const fmt = n => '$' + Math.round(n).toLocaleString();
-  function calc() {
-    const i = +document.getElementById('inquiries').value;
-    const v = +document.getElementById('value').value;
-    const c = +document.getElementById('close').value / 100;
-    document.getElementById('v-inquiries').textContent = i;
-    document.getElementById('v-value').textContent = fmt(v);
-    document.getElementById('v-close').textContent = document.getElementById('close').value + '%';
-    const loss = i * v * c * 365;
-    const net = loss - (297 * 12);
-    document.getElementById('annual-loss').textContent = fmt(loss);
-  }
-  document.querySelectorAll('input[type=range]').forEach(i => i.addEventListener('input', calc));
-  calc();
-
-  // Real character-by-character typewriter effect
-  const stackedLines = document.querySelectorAll('.stacked-lines p[data-text]');
-  let typewriterFired = false;
-
-  function typeLine(p, text, callback) {
-    p.textContent = '';
-    const cursor = document.createElement('span');
-    cursor.className = 'cursor';
-    p.appendChild(cursor);
-    let charIndex = 0;
-    const speed = 45; // ms per character
-    function typeChar() {
-      if (charIndex < text.length) {
-        p.insertBefore(document.createTextNode(text[charIndex]), cursor);
-        charIndex++;
-        setTimeout(typeChar, speed);
-      } else {
-        // Done typing this line
-        if (callback) setTimeout(callback, 400);
-      }
-    }
-    typeChar();
-  }
-
-  function startTypewriter() {
-    let lineIndex = 0;
-    function nextLine() {
-      if (lineIndex < stackedLines.length) {
-        const p = stackedLines[lineIndex];
-        const text = p.getAttribute('data-text');
-        // Remove cursor from previous line
-        if (lineIndex > 0) {
-          const prevCursor = stackedLines[lineIndex - 1].querySelector('.cursor');
-          if (prevCursor) prevCursor.remove();
-        }
-        lineIndex++;
-        typeLine(p, text, nextLine);
-      } else {
-        // Remove cursor from last line after a pause
-        setTimeout(() => {
-          const lastCursor = stackedLines[stackedLines.length - 1].querySelector('.cursor');
-          if (lastCursor) lastCursor.remove();
-        }, 1500);
-      }
-    }
-    nextLine();
-  }
-
-  // Delay sticky mobile CTA until user scrolls past hero
-  const stickyCta = document.querySelector('.sticky-mobile-cta');
-  const heroSection = document.getElementById('hero');
-  if (stickyCta && heroSection) {
-    function checkStickyVisibility() {
-      const heroBottom = heroSection.getBoundingClientRect().bottom;
-      if (heroBottom < 0) {
-        stickyCta.classList.add('visible');
-      } else {
-        stickyCta.classList.remove('visible');
-      }
-    }
-    window.addEventListener('scroll', checkStickyVisibility, { passive: true });
-    checkStickyVisibility();
-  }
-
-  const typewriterObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && !typewriterFired) {
-        typewriterFired = true;
-        startTypewriter();
-      }
-    });
-  }, { threshold: 0.3 });
-  const stackedContainer = document.querySelector('.stacked-lines');
-  if (stackedContainer) typewriterObserver.observe(stackedContainer);
-</script>
-
-
-
-<!-- STICKY MOBILE CTA -->
-<div class="sticky-mobile-cta">
-  <a href="https://links.opsaiworks.com/widget/survey/OZvGptRkUqTzYG24ANM2" target="_blank" rel="noopener" class="btn btn-primary btn-full">Stop Missing Bookings →</a>
-</div>
-
-<!-- GHL Voice AI Widget -->
-<script
-  src="https://beta.leadconnectorhq.com/loader.js"
-  data-resources-url="https://beta.leadconnectorhq.com/chat-widget/loader.js"
-  data-widget-id="6982c7775772197f52134d6a">
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>
