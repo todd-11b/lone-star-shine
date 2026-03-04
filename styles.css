@@ -191,7 +191,7 @@ p { line-height: 1.7; color: var(--gray); }
   letter-spacing: -0.02em;
 }
 .header-logo .logo-star {
-  color: var(--gold);
+  color: var(--indigo);
 }
 .header-logo img {
   height: 48px;
@@ -797,7 +797,7 @@ input[type="range"]::-moz-range-thumb {
 /* --- Reviews --- */
 .reviews {
   padding: 120px 0;
-  background: var(--cloud);
+  background: #f0f0f3;
 }
 .reviews .section-label {
   color: var(--indigo);
@@ -871,14 +871,14 @@ input[type="range"]::-moz-range-thumb {
 }
 .area-tag {
   padding: 14px 16px;
-  background: var(--cloud);
+  background: var(--indigo-light);
   border-radius: var(--radius-sm);
   text-align: center;
   font-weight: 600;
   font-size: 0.9375rem;
-  color: var(--black);
+  color: var(--indigo-dark);
   transition: all var(--transition);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(79,70,229,0.12);
 }
 .area-tag:hover {
   background: var(--indigo);
@@ -1074,7 +1074,7 @@ input[type="range"]::-moz-range-thumb {
   font-size: 1.375rem;
   margin-bottom: 12px;
 }
-.footer-brand h3 .gold { color: var(--gold); }
+.footer-brand h3 .gold { color: var(--indigo-light); }
 .footer-brand p { font-size: 0.9375rem; line-height: 1.7; color: rgba(255,255,255,0.55); }
 .footer h4 {
   color: var(--white);
