@@ -2,7 +2,7 @@
 
 **Operator:** Barley Bus
 **System Owner:** Todd Abrams
-**Last Updated:** 2026-02-28
+**Last Updated:** 2026-03-03
 **Consolidated from:** BB_Profile.md, BB_AI_System.md, BB_Current_State.md
 
 ---
@@ -26,7 +26,8 @@
 1. Classify caller intent within the first ~10 seconds
 2. Answer using the Knowledge Base as the single source of truth
 3. Send the correct CaptainBook booking link via SMS (SMS-first)
-4. Escalate to human follow-up when uncertain or risky (no live transfer)
+4. Offer calendar booking for non-emergency callbacks and consultations (Tier 2)
+5. Escalate to human follow-up only for safety, legal, or active emergencies (Tier 3)
 
 **In Scope:**
 - New booking inquiries
@@ -34,8 +35,8 @@
 - Day-of logistics (meeting points, timing, running late)
 - Policy questions (cancellation, refunds, weather, age restrictions)
 - Private tour / group event inquiries
-- Scheduling callback appointments with the team (via `{{custom_value.callback_scheduling_link}}`)
-- Escalation for safety, legal, complaints
+- Scheduling callbacks and consultations via calendar link
+- Escalation for safety, legal, active emergencies
 
 **Out of Scope (escalate immediately):**
 - Processing refunds
@@ -54,10 +55,15 @@
 **Language Rules:**
 - 1–2 sentences max per response (voice)
 - Ask ONE question at a time
-- Never mention: tags, routing, KB, "transfer," "handoff," "calendar," "appointment"
-- Never say "appointment" for tours — say "booking link" or "reserve link"
+- Never mention: tags, routing, KB, internal systems, "transfer," "handoff"
+- Never send full itineraries — only meeting point/time and booking links
 - Never glamorize intoxication
-- Never invent URLs — only use KB booking links
+- Never invent URLs — only use KB booking links or the calendar link
+
+**Calendar Language:**
+- When offering a callback or consultation: "I can have someone from our team reach out — would you like me to send you a link to pick a time?"
+- Do NOT say "appointment" for tours — say "booking link" or "reserve link"
+- Calendar link is for callbacks and consultations only, not for tour bookings
 
 ### Tour Categories
 
@@ -69,6 +75,7 @@
 | PRIVATE | Private events (bachelorette, corporate, custom groups) | `{{custom_value.booking_url_private}}` |
 | BUS_RENTAL | Transportation only (no guided tour) | `{{custom_value.booking_url_bus_rental}}` |
 | GENERAL | Unknown / browsing | `{{custom_value.booking_url_general}}` |
+| CALLBACK | Callback / consultation scheduling | `{{custom_value.callback_scheduling_link}}` |
 
 ### Knowledge Bases
 
@@ -81,15 +88,34 @@
 | Tour_Descriptions | Tour details, inclusions, highlights | "What tours do you have?", "What's included?", "Tell me about..." |
 | Booking_Links | Authoritative URLs by category | Ready to send a booking link — ALWAYS check before sending |
 
-### Escalation Triggers
+### Escalation Model (Three-Tier)
+
+#### Tier 1 — AI Resolves
+AI answers from KB, sends booking link, or provides information. No human involvement.
+
+#### Tier 2 — AI Schedules (Calendar Booking)
+For non-emergency situations that would otherwise escalate. AI offers to send a calendar link so the customer can pick a time for a callback or consultation.
+
+| Trigger | Action |
+|---------|--------|
+| Corporate / private event inquiry | Offer consultation: "Would you like me to send a link to pick a time to chat with our team?" |
+| Reservation change request | Offer callback: "I can have someone reach out — want me to send a link to pick a time?" |
+| Refund processing needed | Provide policy from KB, offer callback for processing |
+| Caller requests human (non-emergency) | Offer callback: "I can have someone call you back — would you like to pick a time?" |
+| Confidence fallback (AI unsure) | Offer callback before creating a task |
+
+**Disposition:** `tourops_outcome = CalendarBooked`, `tourops_work_state = AI_ACTIVE` (no human handoff)
+
+#### Tier 3 — True Escalation (Human Handoff)
+Only for safety, legal, and active emergencies. Creates a task, sets `tourops_work_state = HUMAN_ACTIVE`.
 
 | Trigger | Priority | Action |
 |---------|----------|--------|
 | Safety keywords (police, lawsuit, injury, crash, ambulance, assault, harassment, DUI) | P0 — CRITICAL | Immediate escalation, collect name/number/date, tag: human handover + support-urgent, end call |
-| Caller requests human | P1 — HIGH | Collect name/number, tag: human handover, end gracefully |
-| KB doesn't have the answer | P1 — HIGH | Escalate, don't guess |
-| Refund exception requested | P1 — HIGH | Escalate — never promise outside written policy |
-| Anything uncertain or risky | P2 — STANDARD | Escalate |
+| Legal keywords (attorney, lawyer, sue, BBB, ADA) | P0b — CRITICAL | Immediate escalation, collect details neutrally, end call |
+| Active DayOf emergency (bus not at location, safety issue in progress) | P1 — URGENT | Immediate escalation to dispatch |
+
+**Disposition:** `tourops_outcome = Escalated`, `tourops_work_state = HUMAN_ACTIVE`
 
 ### Team & Contacts
 
@@ -106,17 +132,18 @@
 - If `{{contact.first_name}}` is already present → do NOT ask again, do NOT overwrite
 - ALWAYS get permission before texting ("Should I send it to this number?")
 - NEVER promise refunds outside written policy
-- NEVER provide or send full routes/itineraries — only meeting point/time + approved links
-- NEVER offer "schedule a call" — escalate to human follow-up if needed
-- NEVER invent booking links — only use URLs from Booking_Links KB
+- NEVER provide or send full routes/itineraries — only meeting point/time and approved links
+- NEVER invent booking links — only use URLs from Booking_Links KB or `{{custom_value.callback_scheduling_link}}`
 - NEVER say "appointment" for tours
+- NEVER bypass Tier 3 for P0/P0b — safety and legal always get immediate human escalation
+- NEVER send calendar link for P0/P0b situations
 
 ---
 
 ## Part 2 — AI System Configuration
 
-**Platform Version:** TourOps Schema Contract 3
-**Schema Contract:** 3 (Doc Revision r06, 2026-02-22)
+**Platform Version:** TourOps Schema Contract 4
+**Schema Contract:** 4 (Doc Revision r07, 2026-03-03)
 
 ### Voice AI
 
@@ -125,7 +152,7 @@
 | File | `prompts/vai_production_prompt.md` |
 | Agent Name | Hope |
 | Platform | GoHighLevel Voice AI Agent |
-| Status | V6.0 DRAFT — Pending 23/23 regression tests + Todd Abrams sign-off. V5.0 remains live. |
+| Status | V6.0 active in BB production — pending 23/23 regression tests + Todd Abrams sign-off before full deploy |
 | Last Changed | 2026-03-03 |
 | Turn limit for confidence fallback | 3 exchanges before escalation fires |
 
@@ -139,8 +166,8 @@
 | Send Booking Link — PRIVATE | SMS | PATH D1: private inquiry under 10 | No change from V5 |
 | Send Booking Link — BUS_RENTAL | SMS | PATH E: transportation only | No change from V5 |
 | Send Booking Link — GENERAL | SMS | Fallback / unknown tour type | No change from V5 |
-| `OPERATOR__BarleyBus__ConsultationBooked` | SMS | PATH E/G: email-fallback when caller declines to give email | **NEW — V6.0.** Sends `{{custom_value.callback_scheduling_link}}`. Template prefix: `OPERATOR__BarleyBus__` |
-| Book Appointment | Appointment | PATH E: 10+ private tour. PATH G: Human request / confidence fallback | **NEW — V6.0.** Calendar: Barley Bus Consultation (Tim). Offering days: 3. Slots/day: 3. Buffer: 1 hour between slots. Triggers when caller provides email. |
+| `OPERATOR__BarleyBus__ConsultationBooked` | SMS | PATH E/G: email-fallback when caller declines to give email | **NEW — V6.0.** Sends `{{custom_value.callback_scheduling_link}}`. Before delivery: "Sending that over now." After delivery: "Did that come through? Sometimes it takes a second or two." |
+| Book Appointment | Appointment | PATH E: 10+ private tour. PATH G: Human request / confidence fallback | **NEW — V6.0.** Calendar: Barley Bus Consultation (Tim). Offering days: 3. Slots/day: 3. Buffer: 1 hour. Before: "Let me get that set up for you." After: "You're all set — you'll get a confirmation to that email." |
 
 ### Conversation AI
 
@@ -186,15 +213,51 @@
 **Narrative Memory Fields (Contract 3):**
 - `tourops_conversationai_summary`, `tourops_voiceai_summary`
 
-**QA Grader Fields (Contract 3):**
+**QA Grader Fields (Contract 3+):**
 - `tourops_last_score`, `tourops_last_review_date`, `tourops_issue_count`
+- `tourops_score_notes` *(Contract 4 — grader writes one-line reasoning)*
 
-**Callback Scheduling:**
+**Calendar Scheduling (Contract 4):**
+- `callback_scheduling_link` *(Custom Value — GHL calendar booking URL)*
 - `{{custom_value.callback_scheduling_link}}` = `https://links.opsaiworks.com/widget/booking/TKYfczjDev5Is1yOu9Vx`
-- Used by Hope and Conversation AI when offering a scheduled callback. ✅ Set in BB production (2026-03-03). Set in sandbox before sandbox deploy.
+- ✅ Set in BB production (2026-03-03). Set in sandbox before sandbox deploy.
+
+**Helper Fields (Non-Contract):**
+- `tourops_disposition_blob_text` — Raw AI classification output used for workflow branching
+- `tourops_escalation_priority` — Escalation priority flag
+- `tourops_handoff_task_open` — Tracks open handoff task state
+
+**Voice AI Native Fields (used in workflow mapping):**
+- `vai_outcome` *(Voice AI outcome — maps to Google Sheets column F)*
+- `vai_nextaction` *(Voice AI next action — maps to Sheets column J)*
+- `cai_nextaction` *(Conv AI next action)*
 
 **Barley Bus Operator-Specific Fields (Voice AI — captured silently when offered):**
 - `CALL_DateRequested`, `CALL_GroupSize`, `VAI_Occasion`, `CALL_PickupArea`
+
+### Google Sheets Integration (Contract 4)
+
+**Sheet:** BB_Daily_Call_Log
+**Tabs:** Raw (one row per call), Daily Summary (auto-aggregating formulas)
+**Workflow:** Append row as last action in `TourOps — VAI — After Call — Grader v1.0`
+
+**Column Mapping (Voice AI):**
+
+| Column | Header | GHL Merge Field |
+|--------|--------|----------------|
+| A | Date | `{{contact.tourops_last_interaction_at}}` (format YYYY-MM-DD) |
+| B | Time | `{{contact.tourops_last_interaction_at}}` (time portion) |
+| C | Contact Name | `{{contact.name}}` |
+| D | Phone | `{{contact.phone}}` |
+| E | Intent Bucket | `{{contact.tourops_intent_bucket}}` |
+| F | Outcome | `{{contact.vai_outcome}}` |
+| G | Work State | `{{contact.tourops_work_state}}` |
+| H | Score | `{{contact.tourops_last_score}}` |
+| I | Score Notes | `{{contact.tourops_score_notes}}` |
+| J | Next Action | `{{contact.vai_nextaction}}` |
+| K | Summary | `{{contact.tourops_voiceai_summary}}` |
+
+> **Note:** Date column must land as YYYY-MM-DD text for Daily Summary COUNTIFS to match TODAY(). If GHL sends full datetime, add a formatter step before the Sheets action.
 
 ### Intent Routing
 
@@ -209,14 +272,14 @@
 | `PART` | `PartnerVendor` |
 | `OTHER` / No Condition Met | `Other` |
 
-> Do not change the AI Splitter routing labels. Canonical enum values written to GHL fields must match Schema Contract 3 exactly.
+> Do not change the AI Splitter routing labels. Canonical enum values written to GHL fields must match Schema Contract 4 exactly.
 
 ### Known Prompt Overrides
 
 **Quote Lead Intercept (Added 2026-02-20):**
 Conversation AI includes a pre-splitter if/else branch that intercepts contacts tagged `tourops_quote_lead` before they reach the Master AI Splitter. These contacts route directly to the `DISC — Quote Lead` module. This exists because quote leads have already selected a tour package option via drip SMS survey — the splitter misclassifies single-digit replies.
 
-No other prompt overrides are active as of 2026-02-25.
+No other prompt overrides are active as of 2026-03-03.
 
 ### Dependencies
 
@@ -225,10 +288,13 @@ No other prompt overrides are active as of 2026-02-25.
 | GoHighLevel Voice AI Agent | Platform | Active account required |
 | GoHighLevel Conversation AI Flow Builder | Platform | SMS + WebChat channels enabled |
 | GoHighLevel Auto-Summaries | Platform | Required for `tourops_conversationai_summary`; shipped GHL Feb 10, 2026 |
+| GoHighLevel Calendar | Platform | Required for callback/consultation scheduling (Contract 4) |
 | Knowledge Base (6 KBs) | Content | Must be populated and current before go-live |
 | SMS Templates | Content | Must exist with `OPERATOR__BarleyBus__` prefix |
-| `tourops_schema_version = 3` field | Configuration | Must be set on account before deployment |
+| `tourops_schema_version = 4` field | Configuration | Must be set on account before deployment |
 | Stuck-State Cleanup Workflow | Automation | Must be active every 4 hours |
+| Google Sheets (BB_Daily_Call_Log) | Integration | Grader workflow appends row after each scored call |
+| `callback_scheduling_link` custom value | Configuration | Must contain working GHL calendar URL |
 | `tourops_quote_lead` tag | GHL Tag | Required for Quote Lead intercept to function |
 
 ---
@@ -239,26 +305,28 @@ No other prompt overrides are active as of 2026-02-25.
 
 | Component | Version | Status | Notes |
 |-----------|---------|--------|-------|
-| Voice AI Prompt | Hope V5.0 | ✅ LIVE | V6.0 drafted 2026-03-03 — pending 23/23 + sign-off before deploy |
-| Schema Contract | 3 (r06) | ✅ LIVE | Confirmed in production 2026-02-28 |
+| Voice AI Prompt | Hope V6.0 | 🔄 Active in BB — pending 23/23 + sign-off | V5.0 was previous live version |
+| Schema Contract | 4 (r07) | ✅ LIVE | Confirmed in production 2026-03-03 |
 | Conversation AI | 8-module system | ✅ LIVE | Router + Module architecture, memory injection implemented |
 | Auto-Summaries | Active | ✅ LIVE | Field: `tourops_conversationai_summary`. Inactivity: 30min, Min: 5 messages |
-| Grader Workflows | VAI + CAI | ✅ LIVE | Schema Contract 3 grader fields active |
+| Grader Workflows | VAI + CAI | ✅ LIVE | Schema Contract 4 grader fields active |
+| Google Sheets | BB_Daily_Call_Log | 🔄 Wiring in progress | Column mapping finalized, Grader → Sheets action pending (OL-11) |
 | GHL Account | Barley Bus Production | ✅ LIVE | LC Phone, Voice AI, Conversation AI |
 
 ### Environment Status
 
 | Environment | Status | Notes |
 |-------------|--------|-------|
-| Production | ✅ Live | Hope V5.0. Never edit directly. |
+| Production | ✅ Live | V6.0 build active in BB. Build-in-BB-first approach (intentional). |
 | Golden | ✅ Active | Source of truth snapshot for current production build |
-| Sandbox | ✅ Active | V3 Flow Builder (Labs). Active for Schema v2 migration testing |
+| Sandbox | ✅ Active | V6.0 changes will be replicated here after BB proof of concept |
 
 ### Active Workflows
 
 | Workflow | Purpose | Status |
 |----------|---------|--------|
-| TourOps — VAI — After Call — Grader v1.0 | Post-call scoring | ✅ Active |
+| TourOps — VAI — After Call — Disposition | Post-call classification + field stamping | ✅ Active — V6.0 branches added (ConsultationBooked, TaskCreated) |
+| TourOps — VAI — After Call — Grader v1.0 | Post-call scoring + Sheets append | ✅ Active — Sheets wiring pending (OL-11) |
 | TourOps — CAI — Conversation Closed — Grader v1.0 | Conversation scoring | ✅ Active |
 | TourOps — Auto-Summaries | CAI summary → Notes append | ✅ Active |
 | TourOps — Task Completed Guard | Handoff resolution + work_state reset | ✅ Active |
@@ -276,10 +344,13 @@ No other prompt overrides are active as of 2026-02-25.
 
 | Item | Priority | Target |
 |------|----------|--------|
-| Hope V6.0 — Run 23/23 regression tests | REQUIRED | Before V6.0 deploy |
-| Hope V6.0 — Todd Abrams written sign-off | REQUIRED | Before V6.0 deploy |
-| Hope prompt regeneration via Compiler v1.1 | MEDIUM | Q2 2026 |
-| RAG chunk retrieval validation | MEDIUM | Next quarterly review |
+| Hope V6.0 — Complete GHL build steps 5-9 | REQUIRED | Active build |
+| Hope V6.0 — Run 23/23 regression tests | REQUIRED | Before V6.0 sign-off |
+| Hope V6.0 — Todd Abrams written sign-off | REQUIRED | Before V6.0 full deploy |
+| Wire Grader → Google Sheets row action | HIGH | 2026-03-07 |
+| Grader prompt update for `tourops_score_notes` | HIGH | 2026-03-07 |
+| Conv AI modules update (READY, DISC, RES_CHG, REF_CAN, CORP) | HIGH | After Voice AI build complete |
+| Schema Contract 5 — ConsultationBooked + TaskCreated | MEDIUM | After BB proof of concept |
 
 ### Known GHL Platform Constraints
 
@@ -295,10 +366,10 @@ No other prompt overrides are active as of 2026-02-25.
 
 | Date | Change | Author |
 |------|--------|--------|
-| 2026-03-03 | Hope V6.0 drafted. Path architecture (A–G), KB-only URLs, consultation flow. Pending 19/19 + sign-off. | Todd Abrams |
+| 2026-03-03 | Hope V6.0 active in BB production. V6.0 GHL build in progress (steps 1-4 complete). After-call Disposition workflow updated with ConsultationBooked and TaskCreated branches. | Todd Abrams |
+| 2026-03-03 | Schema Contract 4 (r07) live. CalendarBooked enum, tourops_score_notes, callback_scheduling_link created in GHL. Google Sheets column mapping finalized. | Todd Abrams |
 | 2026-02-28 | Schema Contract 3 (r06) confirmed live in BB production. | Todd Abrams |
 | 2026-02-28 | Document consolidated from BB_Profile, BB_AI_System, BB_Current_State | Todd Abrams |
-| 2026-02-28 | Schema Contract 3 fields confirmed live in BB production | Todd Abrams |
 | 2026-02-22 | Schema Contract 3 approved and active | Todd Abrams |
 | 2026-02-17 | Auto-Summaries implemented. Cross-channel memory active. | Todd Abrams |
 | 2026-02-14 | Schema Contract 2 architecture documented. Conversation AI 8-module system live. | Todd Abrams |
@@ -314,5 +385,6 @@ No other prompt overrides are active as of 2026-02-25.
 | KB content updates | Todd Abrams | Update KB → verify in sandbox → deploy |
 | Schema changes | Todd Abrams | Full change control process (see canonical_schema.md) |
 | Escalation rule changes | Todd Abrams | Review + regression test before deploy |
+| Calendar configuration | Todd Abrams | Update calendar settings → test booking flow → deploy |
 
 *Update this file after every deployment, prompt change, or schema migration.*

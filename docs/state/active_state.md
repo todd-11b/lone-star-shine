@@ -1,30 +1,36 @@
-# TourOps — Active State
+# TourOps_Active_State.md
 
-**Rule:** Read this at the start of every session. Update it before you close. One file, one source of truth.
+**Replaces:** TO_Build_Current_State.md, TO_Gov_Current_State.md, BB_Current_State.md
+**Rule:** Upload this at the start of every session. Update it before you close. One file, one source of truth.
 **Last Updated:** 2026-03-03
-**Updated By:** Todd Abrams
-**Consolidated from:** TourOps_Active_State.md, TO_Governance_Conflicts_Register.md, TO_Run_Issues_Log.md
+**Updated By:** Todd Abrams [SYSTEM_OWNER]
 
 ---
 
-## WHERE WE ARE
+## WHERE WE ARE (Read First)
 
-**Stage:** Active Build — Hope V6.0 drafted. GHL build work (Conversation AI modules, workflows) in progress directly in BB production.
-**Primary Blocker:** None — build in BB, test in BB, then replicate to sandbox. 23/23 regression tests required before V6.0 deploys to production.
-**Next Human Decision Required:** Todd sign-off on Hope V6.0 after 23/23 pass.
+**Stage:** V6.0 GHL build active in BB production. Steps 1–5 of 9 complete. After-call workflow (step 6) in progress. Schema Contract 4 live. Google Sheets integration mapped.
+**Primary Blocker:** Complete V6.0 GHL build (steps 6–9). Then wire Grader → Google Sheets and run end-to-end test.
+**Next Human Decision Required:** Confirm `vai_outcome` values align with Sheets summary formulas (OL-16). Then complete remaining build steps and test one full call through the pipeline.
 
 ---
 
-## OPEN LOOPS
+## OPEN LOOPS (The Only List That Matters)
 
 | # | What | Who | Due | Status |
 |---|------|-----|-----|--------|
 | OL-2 | Grader validation — 10 conversations, 3 manually scored, delta ≤ 0.5 | Tim | 2026-02-28 | 🔴 Overdue |
-| OL-4 | Version Governance Matrix updated for Schema Contract 3 | Mike | 2026-03-07 | 🟡 Open |
+| OL-4 | Version Governance Matrix updated for Schema Contract 4 | Mike | 2026-03-07 | 🟡 Open |
 | OL-7 | Airtable + n8n build | Freelancer (Upwork) | 2026-03-14 | 🟡 Pending hire |
-| OL-10 | Tim + Mike onboarding emails sent (Claude project setup) | Todd | 2026-03-07 | 🟡 Draft ready — send when Tim has GitHub account |
-| OL-11 | Hope V6.0 — 23/23 regression tests | Mike/Tim | After GHL build complete | 🟡 Open — V6.0 drafted 2026-03-03, GHL build in progress in BB |
-| OL-12 | V6.0 GHL Build — BB Production | Todd | ASAP | 🟡 In Progress. ✅ 1: Consultation calendar created. ✅ 2: callback_scheduling_link custom value set. ⬜ 3: ConsultationBooked SMS template. ⬜ 4: Book Appointment action on Voice AI. ⬜ 5: V6.0 prompt + personality paste. ⬜ 6: After-call workflow (new outcomes + task creation). ⬜ 7: Grader prompt update. ⬜ 8: Conv AI modules (READY, DISC, RES_CHG, REF_CAN, CORP). ⬜ 9: End-to-end test. |
+| OL-8 | Claude project instructions updated (new system prompt) | Todd | 2026-03-01 | 🟡 Pending |
+| OL-9 | New project knowledge files added | Todd | 2026-03-01 | 🟡 Pending |
+| OL-10 | Tim added to Claude project | Todd | 2026-03-01 | 🟡 Confirm before sending README |
+| OL-11 | Wire Grader → Google Sheets row action | Todd | 2026-03-07 | 🟡 Mapping complete — GHL wiring is Step 9 of V6.0 build |
+| OL-12 | Grader prompt update to write `tourops_score_notes` | Mike | 2026-03-07 | 🟡 Field created — grader prompt update is Step 7 of V6.0 build |
+| OL-13 | Test calendar booking flow end-to-end (one call) | Todd | 2026-03-07 | 🔄 In progress — calendar exists, V6.0 prompt active, build steps 6–9 remaining |
+| OL-14 | Update VAI + CAI prompts with calendar offer logic | Mike | 2026-03-10 | 🔄 In progress — V6.0 prompt pasted (step 5 done), CAI modules pending (step 8) |
+| OL-15 | Confirm `vai_outcome` values currently written by disposition workflow | Todd/Mike | 2026-03-05 | 🟢 Confirmed — disposition workflow uses `tourops_disposition_blob_text` branching. Values: LinkSent, CalendarBooked, Escalated, Answered, Abandoned, Voicemail, Spam + V6.0 pending: ConsultationBooked, TaskCreated |
+| OL-16 | Update BB_Daily_Call_Log spreadsheet with actual `vai_outcome` enum values | Todd | After OL-15 | 🟡 Unblocked — update Sheets summary formulas with confirmed values above |
 
 ---
 
@@ -32,44 +38,58 @@
 
 | Conflict | Files | Blocking? | Owner | Due |
 |----------|-------|-----------|-------|-----|
-| Version Governance Matrix references Contract 2; production is on Contract 3 | Version_Governance_Matrix vs. canonical_schema.md r06 | No | Mike | 2026-03-07 |
-
-**Resolved Conflicts:**
-- 2026-02-28: BB overlay files referenced Schema Contract 2 in headers — resolved when Todd confirmed Contract 3 fields already live in BB production. Documentation-only gap.
-- 2026-02-28: Duplicate conflicts registers (two versions) — resolved by consolidating into single file.
-
-**Conflict Rules:**
-- 🔴 Active/Blocking: Two docs give contradictory instructions affecting production → work stops, Todd resolves immediately
-- 🟡 Open/Non-blocking: Docs out of sync but no production harm → resolve within 7 days
-- Flag when: two files contradict on same topic, a production change makes a doc inaccurate, schema version changes but companion docs still reference old version
+| Version Governance Matrix references Contract 2/3, production is on Contract 4 | Version_Governance_Matrix vs. canonical_schema.md r07 | No | Mike | 2026-03-07 |
 
 ---
 
 ## BUILD STATE
 
-**Focus:** Hope V6.0 — GHL build in BB production (Conversation AI modules + workflows)
-**Done:** V6.0 prompt drafted. Three-tier escalation model designed. Regression suite updated to 23 tests.
-**Blocked on:** Nothing — active build
-**Next milestone:** GHL build complete → 23/23 regression tests → Todd sign-off → V6.0 production deploy → replicate to sandbox
+**Focus:** V6.0 GHL build in BB production (BB-first approach — intentional)
+**Done:** Schema Contract 4 live. Calendar created. callback_scheduling_link set. ConsultationBooked SMS template. Book Appointment action. V6.0 prompt pasted.
+**In Progress:** After-call workflow — adding ConsultationBooked and TaskCreated branches (step 6)
+**Blocked on:** Steps 7–9 (Grader prompt, Conv AI modules, end-to-end test)
+
+**V6.0 GHL Build — BB Production (9-Step Sequence):**
+
+| Step | Item | Status |
+|------|------|--------|
+| 1 | Consultation calendar created (Tim's calendar, 8AM–5PM, 15-min slots) | ✅ Done |
+| 2 | `callback_scheduling_link` custom value set in BB production | ✅ Done |
+| 3 | `OPERATOR__BarleyBus__ConsultationBooked` SMS template configured | ✅ Done |
+| 4 | Book Appointment action configured (3 days / 3 slots / 1hr buffer) | ✅ Done |
+| 5 | V6.0 prompt + personality module pasted into Voice AI | ✅ Done |
+| 6 | After-call Disposition workflow — add ConsultationBooked + TaskCreated branches | 🔄 In progress |
+| 7 | Grader prompt update — add `tourops_score_notes` write + new outcome scoring | ⬜ Pending |
+| 8 | Conv AI modules update — READY, DISC, RES_CHG, REF_CAN, CORP | ⬜ Pending |
+| 9 | End-to-end test (5 scenarios: small booking, 10+ consultation, refund, reservation change, safety escalation) | ⬜ Pending |
+
+**Next build action:** Complete step 6 (after-call workflow), then step 7 (grader prompt).
 
 ---
 
 ## GOVERNANCE STATE
 
-Stable. Two items in flight — matrix update (Mike, non-blocking) and infrastructure build (freelancer). No Tier 0/1 conflicts active.
+**Schema Contract 4 approved and documented.** Changes:
+- `CalendarBooked` added to `tourops_outcome` enum
+- `tourops_score_notes` field added (grader reasoning)
+- `callback_scheduling_link` custom value added (calendar booking link)
+- Deflection Rate KPI added
+
+Updated docs: canonical_schema.md (r07), barley_bus.md, conversation_design.md (r11)
+
+**Schema Contract 5 (pending):** `ConsultationBooked` and `TaskCreated` outcome values are in active use in BB production disposition workflow. Formal change control after BB proof of concept.
 
 ---
 
-## OPERATORS
+## OPERATOR: BARLEY BUS (BB)
 
-**Barley Bus**
-- Status: Live in production
-- Schema: Contract 3 (r06) — confirmed live 2026-02-28
-- Grader: Deployed 2026-02-22 — validation in progress
-- QA Scores: Provisional until OL-2 closes
-- Open Items: None operator-specific beyond grader validation
-
-*(Add new `## Operator: [Name]` sections here as new operators go live)*
+**Status:** Live in production
+**Schema:** Contract 4 (r07) — CalendarBooked enum, tourops_score_notes, callback_scheduling_link created in GHL 2026-03-03
+**Calendar:** ✅ Created in GHL (single combined callback/consultation calendar — Tim)
+**V6.0 Build:** Steps 1–5 complete, step 6 in progress
+**Grader:** Deployed 2026-02-22 — validation in progress. Score notes field ready, grader prompt needs update (step 7).
+**Google Sheets:** BB_Daily_Call_Log created with Raw + Daily Summary tabs. Column mapping documented in barley_bus.md. Waiting on Grader workflow wiring (step 9, OL-11).
+**QA Scores:** Provisional until OL-2 closes
 
 ---
 
@@ -77,80 +97,29 @@ Stable. Two items in flight — matrix update (Mike, non-blocking) and infrastru
 
 | Decision | Authority | Date |
 |----------|-----------|------|
-| Hope V6.0 drafted — KB-only URLs, path architecture (A–G), three-tier escalation. Pending 23/23 before deploy. | Todd | 2026-03-03 |
-| Build order: BB production first, sandbox second. Not standard dev flow — intentional. | Todd | 2026-03-03 |
-| Claude project instructions written for Todd, Mike, Tim. Onboarding emails drafted. | Todd | 2026-03-03 |
-| Airtable confirmed as data layer | Todd | 2026-02-28 |
-| n8n built as reusable operator template — operator name as variable | Todd | 2026-02-28 |
-| Mike focused on GHL-specific work — data infrastructure hired out | Todd | 2026-02-28 |
-| Freelancer hired via Upwork for Airtable + n8n QA data flow | Todd | 2026-02-28 |
-| BB confirmed as Operator #1 | Todd | 2026-02-28 |
-| BB Schema Contract 3 migration confirmed complete in production | Todd | 2026-02-28 |
-
----
-
-## ISSUES LOG
-
-*Recurring issues only — 2+ occurrences to enter. Single incidents stay in the weekly review entry.*
-*An issue cannot be marked Resolved without: (1) documented verified root cause AND (2) confirmed no recurrence for 14 consecutive days.*
-
-### Active Issues
-
-| Date | Issue ID | Description | Category | Severity | Frequency | Root Cause | Fix Attempted | Owner | Status |
-|------|----------|-------------|----------|----------|-----------|------------|--------------|-------|--------|
-| — | — | No active issues logged | — | — | — | — | — | — | — |
-
-### Resolved Issues
-
-| Date | Issue ID | Description | Category | Fix | Resolved | Notes |
-|------|----------|-------------|----------|-----|----------|-------|
-| — | — | No resolved issues logged yet | — | — | — | — |
-
-### Issue ID Format
-`TOUROPS-[OPERATOR]-[NUMBER]`
-Examples: `TOUROPS-BB-001`, `TOUROPS-GLOBAL-001`
-
-### Issue Categories
-
-| Category | Description |
-|----------|-------------|
-| Context Awareness | Asked for info caller already provided |
-| Data Collection | Missed required info before sending link |
-| Boundary Enforcement | Failed to handle out-of-scope request correctly |
-| KB Usage | Didn't query KB / gave wrong factual answer |
-| Conversation Flow | Too long, rambling, awkward pacing |
-| Escalation Logic | Didn't escalate when trigger condition was met |
-| Field Stamping | Disposition fields missing or incorrect after call |
-| Grader | Grader failed to fire or scored inaccurately |
-| Persona | Agent name, tone, or intro incorrect or hardcoded — OP_Profile.md mismatch |
-| Technical | System error, failed SMS, workflow malfunction |
-
-### Recurring Issue Policy
-
-| Occurrence | Required Action |
-|------------|----------------|
-| 2nd occurrence (same issue type) | Log in this file. Flag in next weekly review. |
-| 3rd occurrence in 30 days | Architecture review. Escalate to Todd + BUILD. |
-| Critical issue (any count) | Escalate to Todd same day. |
-
-### Monthly Metrics Targets
-
-| Metric | Target |
-|--------|--------|
-| Open critical issues | 0 |
-| Avg time to resolution (critical) | < 48 hours |
-| Avg time to resolution (important) | < 1 week |
-| Repeat failure rate | 0 |
-| Issues per deployment | Trending down |
-| Persona issues (OP_Profile.md mismatches) | 0 |
+| Three-tier escalation model approved (Tier 1: AI resolves, Tier 2: Calendar booking, Tier 3: Human escalation) | [SYSTEM_OWNER] | 2026-03-03 |
+| Combined callback + consultation into single GHL calendar | [SYSTEM_OWNER] | 2026-03-03 |
+| `CalendarBooked` added to `tourops_outcome` — Schema Contract 4 | [SYSTEM_OWNER] | 2026-03-03 |
+| `tourops_score_notes` field created in GHL | [SYSTEM_OWNER] | 2026-03-03 |
+| `callback_scheduling_link` custom value created in GHL | [SYSTEM_OWNER] | 2026-03-03 |
+| Google Sheets row appended from Grader workflow (not Disposition) — Grader fires last, all fields populated | [SYSTEM_OWNER] | 2026-03-03 |
+| BB_Daily_Call_Log column mapping finalized (11 columns: Date, Time, Contact Name, Phone, Intent Bucket, Outcome, Work State, Score, Score Notes, Next Action, Summary) | [SYSTEM_OWNER] | 2026-03-03 |
+| Deflection Rate KPI added — (CalendarBooked) / (CalendarBooked + Escalated) | [SYSTEM_OWNER] | 2026-03-03 |
+| "Scheduling calls" removed from BB out-of-scope — calendar booking is now an AI capability | [SYSTEM_OWNER] | 2026-03-03 |
+| V6.0 GHL build order: build in BB production first, test in BB, then replicate to sandbox (intentional non-standard order) | [SYSTEM_OWNER] | 2026-03-03 |
+| V6.0 ConsultationBooked + TaskCreated outcome values added to disposition workflow — pending Schema Contract 5 formal change control | [SYSTEM_OWNER] | 2026-03-03 |
 
 ---
 
 ## HOW TO USE THIS FILE
 
-**Session start:** Read this file. Note the current stage, open loops, and active conflicts before doing anything.
-**Session end:** Update open loops (close what's done), add new decisions, note any new conflicts.
-**New operator goes live:** Add a new `## Operator: [Name]` section.
-**Closing a loop:** Remove from Open Loops, note resolution in Decisions Log.
+**Session start:** Upload this file. I read it. We work.
+**Session end:** Tell me what changed. I update the artifact. You copy it, save it, replace the old one.
+**Adding a new operator:** Add a new `## OPERATOR: [NAME]` section.
+**Closing a loop:** Move it out of Open Loops, note resolution in Decisions Log.
 
-**This file does NOT replace:** Schema contracts, platform rules, prompt files, regression suites. Those stay as standalone files. This file is only for what's actively moving.
+---
+
+## WHAT THIS FILE DOES NOT REPLACE
+
+Schema contracts, platform rules, prompt files, regression suites — those stay as standalone files in project knowledge. They don't change often. This file is only for what's actively moving.

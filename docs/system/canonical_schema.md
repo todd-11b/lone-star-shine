@@ -1,13 +1,13 @@
 # TourOps - Canonical Schema
 
-**Schema Contract:** 3
-**Doc Revision:** r06 (2026-02-22)
+**Schema Contract:** 4
+**Doc Revision:** r07 (2026-03-03)
 **Created:** 2026-02-14
-**Status:** APPROVED — Schema Contract 3 Active
+**Status:** APPROVED — Schema Contract 4 Active
 **Owner:** Todd Abrams (System Owner)
 **Purpose:** Single source of truth for all system fields, values, and tags
 **Scope:** All TourOps systems (Voice AI + Conversation AI)
-**Schema Version Field:** `tourops_schema_version = 3`
+**Schema Version Field:** `tourops_schema_version = 4`
 **Companion Docs:** TourOps_Conversation_Design_Standard, TourOps_GHL_Platform_Capabilities, TourOps_GHL_Implementation_Recipes
 
 ---
@@ -70,7 +70,7 @@ Editorial revisions, clarifications, or internal workflow refinements do not tri
 
 | Field Name | Type | Value | Purpose |
 |------------|------|-------|---------|
-| `tourops_schema_version` | Number | `3` | Identifies which version of the schema this account is running |
+| `tourops_schema_version` | Number | `4` | Identifies which version of the schema this account is running |
 
 **Rule:** This field must be set on account setup.
 
@@ -121,8 +121,12 @@ Editorial revisions, clarifications, or internal workflow refinements do not tri
 
 | Field Name | Type | Enum Values | Purpose |
 |------------|------|-------------|---------|
-| `tourops_outcome` | Dropdown | `LinkSent`, `Escalated`, `Answered`, `Abandoned`, `Voicemail`, `Spam` | What happened in this interaction |
+| `tourops_outcome` | Dropdown | `LinkSent`, `CalendarBooked`, `Escalated`, `Answered`, `Abandoned`, `Voicemail`, `Spam` | What happened in this interaction |
 | `tourops_next_best_action` | Dropdown | `AwaitCustomerReply`, `HumanFollowUp`, `SendReminder`, `NoAction` | What should happen next |
+
+**Schema Contract 4 Change:** Added `CalendarBooked` to `tourops_outcome`. Used when the AI books a calendar slot (callback or consultation) instead of escalating to a human task. This is the Tier 2 outcome — between AI-resolved and human escalation.
+
+**V6.0 Pending (Schema Contract 5):** `ConsultationBooked` and `TaskCreated` are in active use in BB production disposition workflow as more granular Tier 2 outcomes. Formal addition pending Contract 5 change control after BB proof of concept.
 
 ---
 
@@ -155,17 +159,38 @@ Editorial revisions, clarifications, or internal workflow refinements do not tri
 
 ---
 
-## 10. Grader Fields (Schema Contract 3)
+## 10. Grader Fields (Schema Contract 3+)
 
 | Field Name | Type | Purpose |
 |------------|------|---------|
 | `tourops_last_score` | Number | Quality score from last graded interaction (1–5) |
 | `tourops_last_review_date` | Date | Date of last quality review |
 | `tourops_issue_count` | Number | Number of issues detected across interactions |
+| `tourops_score_notes` | Text | One-line grader reasoning for the score (e.g., "KB Usage: 2 — wrong policy") |
+
+**Schema Contract 4 Change:** Added `tourops_score_notes`. Written by the Grader workflow to capture the top scoring issue for each interaction.
 
 **Required Custom Values (for task assignment):**
 - `ops_manager_user_id` — GHL user ID for ops manager
 - `tourops_admin_user_id` — GHL user ID for admin
+
+---
+
+## 10b. Calendar Scheduling Fields (Schema Contract 4)
+
+| Field Name | Type | Purpose |
+|------------|------|---------|
+| `callback_scheduling_link` | Custom Value | GHL calendar booking link sent via SMS when AI offers a callback or consultation |
+
+**Required Custom Values:**
+- `callback_scheduling_link` — GHL calendar URL for operator's callback/consultation calendar
+
+**Rules:**
+- AI sends this link via SMS when a non-emergency interaction would otherwise escalate
+- P0 Safety and P0b Legal always bypass calendar — immediate escalation only
+- Active DayOf emergencies bypass calendar — immediate escalation only
+- After calendar is booked, disposition writes `tourops_outcome = CalendarBooked`
+- `tourops_work_state` stays `AI_ACTIVE` (no human handoff triggered)
 
 ---
 
@@ -202,13 +227,14 @@ Every conversation must stamp these fields before closing:
 | `tourops_intent_detail` | Required when intent_bucket = Other |
 | `tourops_lifecycle_stage` | Update only if a qualifying lifecycle event occurred |
 | `tourops_open_loop` | Update if conversation progression changed what's needed |
+| `tourops_score_notes` | Written by Grader workflow after scoring |
 
 ---
 
 ## 13. Pre-Deployment Checklist
 
 Before any deployment:
-- [ ] `tourops_schema_version` is set to 3
+- [ ] `tourops_schema_version` is set to 4
 - [ ] All required disposition fields exist in the account
 - [ ] All enum values match this schema exactly
 - [ ] `tourops_work_state` field exists with default `AI_ACTIVE`
@@ -219,13 +245,15 @@ Before any deployment:
 - [ ] System tags match canonical definitions (visibility-only, not control)
 - [ ] No custom fields introduced outside change control
 - [ ] Operator SMS template extensions use `OPERATOR__` prefix
-- [ ] Regression tests pass with v3 canonical values
+- [ ] Regression tests pass with v4 canonical values
 - [ ] Narrative memory fields exist (`tourops_conversationai_summary`, `tourops_voiceai_summary`)
 - [ ] Auto-summaries workflow configured (if using Conversation AI)
-- [ ] Grader fields exist (`tourops_last_score`, `tourops_last_review_date`, `tourops_issue_count`)
+- [ ] Grader fields exist (`tourops_last_score`, `tourops_last_review_date`, `tourops_issue_count`, `tourops_score_notes`)
 - [ ] Grader custom values configured (`ops_manager_user_id`, `tourops_admin_user_id`)
 - [ ] VAI Grader workflow active (`TourOps — VAI — After Call — Grader v1.0`)
 - [ ] CAI Grader workflow active (`TourOps — CAI — Conversation Closed — Grader v1.0`)
+- [ ] `callback_scheduling_link` custom value set (if calendar tier enabled)
+- [ ] Calendar booking link tested and confirmed working
 
 ---
 
@@ -257,10 +285,22 @@ Before any deployment:
 | **Call-to-Book Rate** | `Booked / ReadyToBook` | `tourops_outcome`, `tourops_intent_bucket` |
 | **Discovery Conversion** | `Booked / Discovery` (over time) | `tourops_outcome`, `tourops_intent_bucket`, `tourops_lifecycle_stage` |
 | **Escalation Rate** | `Escalated / Total Interactions` | `tourops_outcome` |
+| **Deflection Rate** | `CalendarBooked / (CalendarBooked + Escalated)` | `tourops_outcome` |
 | **SMS Engagement Proxy** | `AwaitCustomerReply after LinkSent / Total LinkSent` | `tourops_next_best_action`, `tourops_outcome` |
 | **Handoff Resolution Time** | Time between `work_state = HUMAN_ACTIVE` and `work_state = AI_ACTIVE` | `tourops_work_state`, `tourops_last_interaction_at` |
 | **Abandonment Rate** | `Abandoned / LinkSent` (over 48h window) | `tourops_lifecycle_stage`, `tourops_outcome` |
 
+**Schema Contract 4 Change:** Added Deflection Rate KPI — measures how many potential escalations the AI resolved via calendar booking instead of human handoff.
+
 ---
 
-*Last Updated: 2026-02-22 | Owner: Todd Abrams | Schema Contract 3*
+## 16. Schema Contract Changelog
+
+| Contract | Date | Changes |
+|----------|------|---------|
+| 3 | 2026-02-22 | Added grader fields (`tourops_last_score`, `tourops_last_review_date`, `tourops_issue_count`). Added narrative memory fields. |
+| 4 | 2026-03-03 | Added `CalendarBooked` to `tourops_outcome` enum. Added `tourops_score_notes` field. Added `callback_scheduling_link` custom value. Added Deflection Rate KPI. |
+
+---
+
+*Last Updated: 2026-03-03 | Owner: Todd Abrams | Schema Contract 4*
