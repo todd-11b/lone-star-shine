@@ -194,6 +194,66 @@ Editorial revisions, clarifications, or internal workflow refinements do not tri
 
 ---
 
+## 10c. Operator Business Intelligence Fields
+
+| Field | Type | Purpose |
+|-------|------|---------|
+| `tourops_aov` | Custom Value | Operator's average order value in dollars — set at onboarding |
+| `tourops_conversion_rate` | Custom Value | Lead-to-booking conversion rate as decimal (e.g. 0.25 = 25%) — set at onboarding, default 0.25 |
+| `tourops_daily_est_revenue` | Custom Field (Number) | Nightly calculated: daily inquiries × conversion_rate × AOV — written by Proof of Work workflow |
+
+**Onboarding Questions:**
+1. "What is your average tour booking value?" → sets `tourops_aov`
+2. "What is your current lead-to-booking conversion rate?" → sets `tourops_conversion_rate` (default: 0.25 if unknown)
+
+**Rules:**
+- `tourops_aov` and `tourops_conversion_rate` set per operator at onboarding — updated manually if changed
+- `tourops_daily_est_revenue` calculated nightly by scheduled workflow
+- Calculation: opportunities created today × `tourops_conversion_rate` × `tourops_aov`
+
+---
+
+## 10d. GHL Pipeline Configuration
+
+**Pipeline Name:** Tour Sales
+
+| Stage | Meaning |
+|-------|---------|
+| New Lead | Inquiry received — AI engaging |
+| Quoted | AI sent pricing + booking link |
+| Booked | Deposit paid — confirmed |
+| Lost | Did not convert |
+
+**Rules:**
+- Only booking-intent contacts enter this pipeline
+- Vendors, drivers, spam, and resolved FAQ contacts never create an Opportunity
+- AI moves stage via after-call Disposition workflow actions
+
+---
+
+## 10e. GHL Dashboard Configuration
+
+**Dashboard Name:** Tour Ops Command Center (set as default)
+
+| Widget | Type | Filter | Purpose |
+|--------|------|--------|---------|
+| Urgent Issues | Tasks | Priority = High, Status = Open | Safety/legal escalations |
+| Today's Callbacks | Appointments | Calendar = AI Callback, Date = Today | AI-scheduled consultations |
+| Leads This Week | Opportunities | Date Created = Last 7 Days | New inquiry volume |
+
+**Proof of Work Section (daily — numeric widgets):**
+
+| Widget | Source |
+|--------|--------|
+| Calls Answered | Call report — today, answered |
+| Messages Handled | Conversation count — today |
+| Booking Links Sent | Opportunities moved to Quoted — today |
+| Consultations Booked | Appointments created today — AI Callback calendar |
+| Est. Bookings | Booking links sent × `tourops_conversion_rate` |
+| Est. Revenue | Est. bookings × `tourops_aov` (from `tourops_daily_est_revenue`) |
+
+---
+
 ## 11. System Tags (Visibility Only — Do NOT Use to Control AI)
 
 | Tag | Purpose |
