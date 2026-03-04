@@ -9,10 +9,10 @@
   <!-- Star highlight - lighter right facets -->
   <polygon points="100,28 116,72 162,72 124,98 138,142 100,116" fill="#F0CA5A" opacity="0.4"/>
 
-  <!-- Sparkle diamonds - indigo/purple -->
-  <polygon points="140,42 143,50 146,42 143,34" fill="#8B5CF6"/>
-  <polygon points="155,58 157,63 159,58 157,53" fill="#8B5CF6"/>
-  <polygon points="130,32 131.5,36 133,32 131.5,28" fill="#8B5CF6"/>
+  <!-- Sparkle diamonds - indigo -->
+  <polygon points="140,42 143,50 146,42 143,34" fill="#4F46E5"/>
+  <polygon points="155,58 157,63 159,58 157,53" fill="#4F46E5"/>
+  <polygon points="130,32 131.5,36 133,32 131.5,28" fill="#4F46E5"/>
   <polygon points="148,72 150,76 152,72 150,68" fill="#c7d2fe"/>
 
   <!-- Sparkle rays from top of star -->
