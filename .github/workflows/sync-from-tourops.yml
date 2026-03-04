@@ -1,0 +1,31 @@
+name: Sync from tourops-landing
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout lone-star-shine
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Pull latest from tourops-landing cleaning branch
+        run: |
+          git remote add upstream https://github.com/todd-11b/tourops-landing.git
+          git fetch upstream claude/cleaning-website-design-VH2Dj
+
+          LOCAL_SHA=$(git rev-parse HEAD)
+          UPSTREAM_SHA=$(git rev-parse upstream/claude/cleaning-website-design-VH2Dj)
+
+          if [ "$LOCAL_SHA" = "$UPSTREAM_SHA" ]; then
+            echo "Already up to date"
+            exit 0
+          fi
+
+          git reset --hard upstream/claude/cleaning-website-design-VH2Dj
+          git push origin main --force
