@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Circular border ring -->
+  <circle cx="100" cy="100" r="92" fill="none" stroke="#D4A843" stroke-width="2.5"/>
+
+  <!-- Gold star - main body -->
+  <polygon points="100,28 116,72 162,72 124,98 138,142 100,116 62,142 76,98 38,72 84,72" fill="#E8B84B"/>
+  <!-- Star shading - darker left facets -->
+  <polygon points="100,28 84,72 38,72 76,98 62,142 100,116" fill="#D4A030" opacity="0.5"/>
+  <!-- Star highlight - lighter right facets -->
+  <polygon points="100,28 116,72 162,72 124,98 138,142 100,116" fill="#F0CA5A" opacity="0.4"/>
+
+  <!-- Sparkle diamonds - light blue (right version style) -->
+  <polygon points="140,42 143,50 146,42 143,34" fill="#8ED8F0"/>
+  <polygon points="155,58 157,63 159,58 157,53" fill="#8ED8F0"/>
+  <polygon points="130,32 131.5,36 133,32 131.5,28" fill="#8ED8F0"/>
+  <polygon points="148,72 150,76 152,72 150,68" fill="#A8E4F8"/>
+
+  <!-- Sparkle rays from top of star -->
+  <line x1="118" y1="38" x2="132" y2="28" stroke="#B4E4F4" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="112" y1="32" x2="120" y2="22" stroke="#B4E4F4" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="124" y1="44" x2="140" y2="36" stroke="#B4E4F4" stroke-width="1.2" stroke-linecap="round"/>
+
+  <!-- LONE STAR text -->
+  <text x="100" y="166" text-anchor="middle" font-family="'Georgia', 'Times New Roman', serif" font-size="22" font-weight="bold" fill="#1B2E4B" letter-spacing="3">LONE STAR</text>
+
+  <!-- Horizontal line -->
+  <line x1="42" y1="172" x2="158" y2="172" stroke="#1B2E4B" stroke-width="1"/>
+
+  <!-- SHINE text -->
+  <text x="100" y="188" text-anchor="middle" font-family="'Georgia', 'Times New Roman', serif" font-size="18" fill="#1B2E4B" letter-spacing="5">SHINE</text>
+</svg>
