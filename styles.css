@@ -1,6 +1,6 @@
 /* ========================================
    LONE STAR SHINE — styles.css
-   Premium Residential Cleaning – San Antonio, TX
+   Premium Residential Cleaning – Austin, TX
    ======================================== */
 
 /* --- Reset & Base --- */
@@ -303,7 +303,7 @@ p { line-height: 1.7; color: var(--gray); }
 }
 .hero-badge::before { content: '⚡'; }
 .hero h1 { margin-bottom: 24px; }
-.hero h1 .gold { color: var(--indigo); }
+.hero h1 .gold { color: var(--black); }
 .hero-sub {
   font-size: 1.1875rem;
   color: var(--gray);
@@ -682,7 +682,7 @@ input[type="range"]::-moz-range-thumb {
 }
 .pricing-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 28px;
 }
 .pricing-card {
@@ -831,7 +831,7 @@ input[type="range"]::-moz-range-thumb {
 }
 .reviews-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 28px;
 }
 .review-card {
@@ -1249,8 +1249,7 @@ input[type="range"]::-moz-range-thumb {
   .proof-grid { grid-template-columns: repeat(2, 1fr); }
   .services-grid { grid-template-columns: repeat(2, 1fr); }
   .pricing-grid { grid-template-columns: repeat(2, 1fr); }
-  .guarantee-list { grid-template-columns: 1fr; }
-  .reviews-grid { grid-template-columns: repeat(2, 1fr); }
+  .reviews-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .area-grid { grid-template-columns: repeat(3, 1fr); }
 }
