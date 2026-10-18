@@ -10,6 +10,36 @@ from pathlib import Path, PurePosixPath
 from urllib.parse import unquote, urlsplit
 
 
+ASCII_LOWER = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")
+# Finite HTML GlobalEventHandlers IDL snapshot, October 18, 2026:
+# https://html.spec.whatwg.org/multipage/webappapis.html#handler-globaleventhandlers
+# Other standards extend that interface; this list does not claim all DOM events.
+EVENT_HANDLER_ATTRIBUTES = frozenset("""
+onabort onauxclick onbeforeinput onbeforematch onbeforetoggle onblur oncancel
+oncanplay oncanplaythrough onchange onclick onclose oncommand oncontextlost
+oncontextmenu oncontextrestored oncopy oncuechange oncut ondblclick ondrag
+ondragend ondragenter ondragleave ondragover ondragstart ondrop ondurationchange
+onemptied onended onerror onfocus onformdata oninput oninvalid onkeydown
+onkeypress onkeyup onload onloadeddata onloadedmetadata onloadstart onmousedown
+onmouseenter onmouseleave onmousemove onmouseout onmouseover onmouseup onpaste
+onpause onplay onplaying onprogress onratechange onreset onresize onscroll
+onscrollend onsecuritypolicyviolation onseeked onseeking onselect onslotchange
+onstalled onsubmit onsuspend ontimeupdate ontoggle onvolumechange onwaiting
+onwebkitanimationend onwebkitanimationiteration onwebkitanimationstart
+onwebkittransitionend onwheel
+""".split())
+
+
+def coverage_lines():
+    return [
+        "Supported local resources (tracked paths): script/img/source/video/audio/iframe src; video poster; link href for ASCII-case-insensitive stylesheet/icon/preload/modulepreload; img/source srcset; CSS url(...) and quoted @import in lowercase .css, style blocks and style attributes.",
+        "Supported anchors: #id and explicit local .html#id targets and IDs. Supported syntax: inline classic/module scripts, lowercase .js/.mjs sources and their local static import/re-export graph, and FunctionBody syntax for the finite handler list below. Script/style EOF and repository path escapes are rejected; any base[href] is unsupported and fails closed.",
+        "Handler allowlist (HTML GlobalEventHandlers snapshot, not all DOM handlers): " + " ".join(sorted(EVENT_HANDLER_ATTRIBUTES)),
+        "Unverified extensions: query-only same-page fragments; manifest links; track/object/embed/image-input resource attributes; CSS image-set string candidates; nonlowercase/extensionless or other local script/dependency filenames; other event-handler families; bare/import-map/dynamic module resolution; plain navigation and rewritten routes.",
+        "Limits: lowercase .html/.css/.js/.mjs source loading only; bounded lexical CSS/HTML checks, not full parser/error recovery, module linking/evaluation, image selection/fetch, DOM execution or production/user-flow proof. Use focused verification or a scoped extension for an outcome relying on an unverified surface.",
+    ]
+
+
 def local_path(owner, value):
     url = urlsplit(value.strip())
     if url.scheme or url.netloc or not url.path:
@@ -221,12 +251,17 @@ class Page(HTMLParser):
         self.scripts = []
         self.external_scripts = []
         self.handlers = []
+        self.base_hrefs = []
+        self.unverified = []
         self.script = None
         self.open_script_line = None
         self.style = None
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
+        rels = {token.translate(ASCII_LOWER) for token in re.findall(r"[^ \t\n\r\f]+", attrs.get("rel", ""))}
+        if tag == "base" and "href" in attrs:
+            self.base_hrefs.append(self.getpos()[0])
         if attrs.get("id"):
             self.ids.add(attrs["id"])
         if tag in ("script", "img", "source", "video", "audio", "iframe") and attrs.get("src"):
@@ -235,8 +270,14 @@ class Page(HTMLParser):
             self.resources.extend(srcset_resources(attrs["srcset"]))
         if tag == "video" and attrs.get("poster"):
             self.resources.append(attrs["poster"])
-        if tag == "link" and set(attrs.get("rel", "").split()) & {"stylesheet", "icon", "preload", "modulepreload"} and attrs.get("href"):
+        if tag == "link" and rels & {"stylesheet", "icon", "preload", "modulepreload"} and attrs.get("href"):
             self.resources.append(attrs["href"])
+        if tag == "link" and "manifest" in rels and attrs.get("href"):
+            self.unverified.append("link[rel=manifest] resource extension")
+        if any(tag == element and attrs.get(attribute) for element, attribute in (("track", "src"), ("object", "data"), ("embed", "src"))):
+            self.unverified.append(tag + " resource-attribute extension")
+        if tag == "input" and attrs.get("type", "").translate(ASCII_LOWER) == "image" and attrs.get("src"):
+            self.unverified.append("input[type=image] resource extension")
         if tag == "a" and attrs.get("href", "").startswith("#") and len(attrs["href"]) > 1:
             self.anchors.append(unquote(attrs["href"][1:]))
         if tag == "a" and attrs.get("href"):
@@ -245,7 +286,7 @@ class Page(HTMLParser):
         if tag == "style":
             self.style = []
         for name, body in attrs.items():
-            if name.startswith("on") and body is not None:
+            if name in EVENT_HANDLER_ATTRIBUTES and body is not None:
                 self.handlers.append({"line": self.getpos()[0], "name": name, "body": body})
         if tag == "script":
             self.open_script_line = self.getpos()[0]
@@ -304,8 +345,10 @@ else new (require("node:vm").Script)(source);
     return f"{label}: JavaScript syntax invalid\n{result.stderr}" if result.returncode else None
 
 
-def check_sources(tracked, sources):
+def check_sources(tracked, sources, unverified=None):
     errors = []
+    if unverified is None:
+        unverified = []
     pages = {}
     external_kinds = {}
     for path, content in sources.items():
@@ -315,6 +358,9 @@ def check_sources(tracked, sources):
         page.feed(content)
         page.close()
         pages[path] = page
+        unverified.extend(f"{path}: {item}" for item in page.unverified)
+        for line in page.base_hrefs:
+            errors.append(f"{path}:{line}: unsupported base[href]; resource resolution is unverified. Remove it or supply a separately scoped base-aware check.")
         if page.open_script_line is not None:
             errors.append(f"{path}:{page.open_script_line}: unclosed script at EOF")
         if page.style is not None:
@@ -326,6 +372,10 @@ def check_sources(tracked, sources):
                 continue  # The resource check below reports this invalid path.
             if resolved is not None:
                 external_kinds.setdefault(resolved, set()).add(kind)
+                if not resolved.endswith((".js", ".mjs")):
+                    unverified.append(f"{path}: unparsed local script syntax: {resolved} (only lowercase .js/.mjs are parsed)")
+    if any(page.base_hrefs for page in pages.values()):
+        return errors  # Never validate resource paths using a known wrong base.
     module_cache = {}
 
     def parsed_module(label, source):
@@ -335,7 +385,7 @@ def check_sources(tracked, sources):
         return module_cache[key]
 
     pending = [(path, path, content) for path, content in sources.items()
-               if path.endswith(".mjs") or "module" in external_kinds.get(path, set())]
+               if path.endswith((".js", ".mjs")) and (path.endswith(".mjs") or "module" in external_kinds.get(path, set()))]
     for path, page in pages.items():
         pending.extend((path, f"{path}:{script['line']}", "".join(script["parts"]))
                        for script in page.scripts if script["kind"] == "module")
@@ -363,6 +413,8 @@ def check_sources(tracked, sources):
             elif resolved in sources and resolved.endswith((".js", ".mjs")):
                 external_kinds.setdefault(resolved, set()).add("module")
                 pending.append((resolved, resolved, sources[resolved]))
+            elif not resolved.endswith((".js", ".mjs")):
+                unverified.append(f"{owner}: unparsed local module dependency syntax: {resolved} (only lowercase .js/.mjs are parsed)")
 
     for path, content in sources.items():
         references = []
@@ -376,7 +428,10 @@ def check_sources(tracked, sources):
                 # Check cross-page fragment links to explicit local HTML pages.
                 # Ordinary navigation, rewritten routes and other media remain
                 # outside this bounded anchor check.
-                if not urlsplit(reference).fragment:
+                parsed = urlsplit(reference)
+                if parsed.query and not parsed.path and parsed.fragment:
+                    unverified.append(f"{path}: query-only same-page fragment extension is unverified")
+                if not parsed.fragment:
                     continue
                 try:
                     target = local_path(path, reference)
@@ -416,19 +471,31 @@ def check_sources(tracked, sources):
                 continue
             if resolved is not None and resolved not in tracked:
                 errors.append(f"{path}: missing tracked resource {reference} -> {resolved}")
+        if path.endswith((".html", ".css")) and re.search(r"(?:-webkit-)?image-set\s*\(", content, re.IGNORECASE):
+            unverified.append(f"{path}: image-set(...) mention; CSS string candidates are unverified")
     return errors
 
 
 def main():
+    if sys.argv[1:] == ["--help"]:
+        print(__doc__)
+        print("\n".join(coverage_lines()))
+        return 0
+    if sys.argv[1:]:
+        raise SystemExit("Usage: check-static.py [--help]")
     tracked = set(subprocess.check_output(["git", "ls-files", "-z"]).decode().split("\0")) - {""}
     if "index.html" not in tracked:
         raise SystemExit("Root index.html must be tracked.")
     sources = {path: Path(path).read_text() for path in sorted(tracked) if path.endswith((".html", ".css", ".js", ".mjs"))}
-    errors = check_sources(tracked, sources)
+    unverified = []
+    errors = check_sources(tracked, sources, unverified)
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
-    print(f"Static checks passed: {len(sources)} HTML/CSS/JS files; local resources, anchors and inline/external JavaScript and event-handler syntax.")
+    print(f"Enumerated supported source checks passed; loaded {len(sources)} lowercase-suffix source files. Observed unverified surfaces: {len(set(unverified))}.")
+    print("\n".join(coverage_lines()))
+    for item in sorted(set(unverified)):
+        print("UNVERIFIED: " + item)
     return 0
 
 
