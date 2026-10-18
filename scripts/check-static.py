@@ -317,6 +317,8 @@ def check_sources(tracked, sources):
         pages[path] = page
         if page.open_script_line is not None:
             errors.append(f"{path}:{page.open_script_line}: unclosed script at EOF")
+        if page.style is not None:
+            errors.append(f"{path}: unclosed style at EOF")
         for reference, kind in page.external_scripts:
             try:
                 resolved = local_path(path, reference)
