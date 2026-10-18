@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Check static-site references and JavaScript syntax; never execute app code."""
 
+import json
 import re
 import subprocess
 import sys
@@ -29,7 +30,34 @@ def local_path(owner, value):
 
 
 def css_resources(content):
-    return [match[1] for match in re.findall(r"url\(\s*(['\"]?)(.*?)\1\s*\)", content, re.DOTALL)]
+    # Ignore comments while preserving quoted and escaped comment markers.
+    live = []
+    quote = None
+    index = 0
+    while index < len(content):
+        char = content[index]
+        if char == "\\":
+            live.append(content[index:index + 2])
+            index += 2
+            continue
+        if quote:
+            live.append(char)
+            if char == quote:
+                quote = None
+        elif char in ("'", '"'):
+            quote = char
+            live.append(char)
+        elif content.startswith("/*", index):
+            close = content.find("*/", index + 2)
+            if close < 0:
+                break
+            live.append(" ")
+            index = close + 2
+            continue
+        else:
+            live.append(char)
+        index += 1
+    return [match[1] for match in re.findall(r"url\(\s*(['\"]?)(.*?)\1\s*\)", "".join(live), re.DOTALL)]
 
 
 class Page(HTMLParser):
@@ -86,20 +114,33 @@ class Page(HTMLParser):
             self.style = None
 
 
+def module_details(label, source):
+    # Constructing a SourceTextModule parses only. Never link or evaluate it.
+    parser = """
+const source = require("node:fs").readFileSync(0, "utf8");
+const module = new (require("node:vm").SourceTextModule)(source);
+process.stdout.write(JSON.stringify(module.moduleRequests.map(request => request.specifier)));
+"""
+    result = subprocess.run(["node", "--experimental-vm-modules", "--eval", parser],
+                            input=source, capture_output=True, text=True, timeout=10)
+    if result.returncode:
+        return f"{label}: JavaScript syntax invalid\n{result.stderr}", []
+    return None, json.loads(result.stdout)
+
+
 def javascript_error(label, source, kind="script"):
     if kind == "module":
-        command = ["node", "--input-type=module", "--check"]
-    else:
-        # vm.Script uses browser Script grammar, without CommonJS's implicit
-        # function wrapper. Function construction parses handler FunctionBody
-        # grammar (where return is legal) but never calls the resulting function.
-        parser = """
+        return module_details(label, source)[0]
+    # vm.Script uses browser Script grammar, without CommonJS's implicit
+    # function wrapper. Function construction parses handler FunctionBody
+    # grammar (where return is legal) but never calls the resulting function.
+    parser = """
 const source = require("node:fs").readFileSync(0, "utf8");
 if (process.argv[1] === "handler") new Function(source);
 else new (require("node:vm").Script)(source);
 """
-        command = ["node", "--eval", parser, kind]
-    result = subprocess.run(command, input=source, capture_output=True, text=True, timeout=10)
+    result = subprocess.run(["node", "--eval", parser, kind],
+                            input=source, capture_output=True, text=True, timeout=10)
     return f"{label}: JavaScript syntax invalid\n{result.stderr}" if result.returncode else None
 
 
@@ -120,6 +161,44 @@ def check_sources(tracked, sources):
                 continue  # The resource check below reports this invalid path.
             if resolved is not None:
                 external_kinds.setdefault(resolved, set()).add(kind)
+    module_cache = {}
+
+    def parsed_module(label, source):
+        key = (label, source)
+        if key not in module_cache:
+            module_cache[key] = module_details(label, source)
+        return module_cache[key]
+
+    pending = [(path, path, content) for path, content in sources.items()
+               if path.endswith(".mjs") or "module" in external_kinds.get(path, set())]
+    for path, page in pages.items():
+        pending.extend((path, f"{path}:{script['line']}", "".join(script["parts"]))
+                       for script in page.scripts if script["kind"] == "module")
+    seen = set()
+    while pending:
+        owner, label, source = pending.pop()
+        if (label, source) in seen:
+            continue
+        seen.add((label, source))
+        _, specifiers = parsed_module(label, source)
+        for specifier in specifiers:
+            # Bare/import-map, remote and dynamic requests are outside this
+            # bounded local static-import/export-from graph.
+            if not specifier.startswith(("./", "../", "/")):
+                continue
+            try:
+                resolved = local_path(owner, specifier)
+            except ValueError as error:
+                errors.append(str(error))
+                continue
+            if resolved is None:
+                continue
+            if resolved not in tracked:
+                errors.append(f"{owner}: missing tracked module {specifier} -> {resolved}")
+            elif resolved in sources and resolved.endswith((".js", ".mjs")):
+                external_kinds.setdefault(resolved, set()).add("module")
+                pending.append((resolved, resolved, sources[resolved]))
+
     for path, content in sources.items():
         references = []
         if path.endswith(".html"):
@@ -129,7 +208,8 @@ def check_sources(tracked, sources):
                 if anchor not in page.ids:
                     errors.append(f"{path}: missing anchor #{anchor}")
             for script in page.scripts:
-                error = javascript_error(f"{path}:{script['line']}", "".join(script["parts"]), script["kind"])
+                label, source = f"{path}:{script['line']}", "".join(script["parts"])
+                error = parsed_module(label, source)[0] if script["kind"] == "module" else javascript_error(label, source)
                 if error:
                     errors.append(error)
             for handler in page.handlers:
@@ -141,7 +221,7 @@ def check_sources(tracked, sources):
         elif path.endswith((".js", ".mjs")):
             kinds = external_kinds.get(path, {"module" if path.endswith(".mjs") else "script"})
             for kind in sorted(kinds):
-                error = javascript_error(f"{path} ({kind})", content, kind)
+                error = parsed_module(path, content)[0] if kind == "module" else javascript_error(f"{path} ({kind})", content, kind)
                 if error:
                     errors.append(error)
         for reference in references:
