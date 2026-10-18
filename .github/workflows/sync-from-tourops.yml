@@ -1,31 +1,27 @@
-name: Sync from tourops-landing
+name: Inspect legacy TourOps demo source
 
+# Direct scheduled force-push sync is retired. Changes use the reviewed PR and
+# verified-deployment process; this manual job only reports source differences.
 on:
-  schedule:
-    - cron: '*/15 * * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: inspect-legacy-demo-source
+  cancel-in-progress: true
+
 jobs:
-  sync:
-    runs-on: ubuntu-latest
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
     steps:
-      - name: Checkout lone-star-shine
-        uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          fetch-depth: 0
-
-      - name: Pull latest from tourops-landing cleaning branch
+          persist-credentials: false
+      - name: Compare legacy source without changing the remote repository
         run: |
-          git remote add upstream https://github.com/todd-11b/tourops-landing.git
-          git fetch upstream claude/cleaning-website-design-VH2Dj
-
-          LOCAL_SHA=$(git rev-parse HEAD)
-          UPSTREAM_SHA=$(git rev-parse upstream/claude/cleaning-website-design-VH2Dj)
-
-          if [ "$LOCAL_SHA" = "$UPSTREAM_SHA" ]; then
-            echo "Already up to date"
-            exit 0
-          fi
-
-          git reset --hard upstream/claude/cleaning-website-design-VH2Dj
-          git push origin main --force
+          git fetch --no-tags --depth=1 https://github.com/todd-11b/tourops-landing.git refs/heads/claude/cleaning-website-design-VH2Dj
+          git diff --stat HEAD FETCH_HEAD
+          echo "::notice::Inspection only. Review any proposed change in a pull request before merge and deployment."
